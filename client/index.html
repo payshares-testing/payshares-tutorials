@@ -1,0 +1,187 @@
+<html>
+  <head>
+    <script type="text/javascript" src="angular.min.js"></script>
+    <script type="text/javascript" src="./stellar-lib.js"></script>
+    <script type="text/javascript" src="./main.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./style.css">
+  </head>
+  <body ng-app="myApp" class="container ng-scope">
+    <!-- Create Stellar Address Widget -->
+    <div class="row widget-row">
+      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="CreateStellarAddressCtrl">
+        <div class="row">
+           <h3 class="title col-xs-12 text-center">Create a Stellar Address</h3>
+        </div>
+        <div class="row">
+          <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="generate()">Generate</button>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <pre>{{result}}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Stellar Account Balance Widget -->
+    <div class="row widget-row">
+      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="ViewAccountInfoCtrl">
+        <div class="row">
+           <h3 class="title col-xs-12 text-center">View Account Info</h3>
+        </div>
+        <form role="form" class="form-horizontal">
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="viewAccountInfo()">View Account Info</button>
+          </div>
+        </form>
+        <div class="row">
+          <div class="col-xs-12">
+            <pre>{{data.result}}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Send a Payment Widget -->
+    <div class="row widget-row">
+      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="SendPaymentCtrl">
+        <div class="row">
+           <h3 class="title col-xs-12 text-center">Send a Payment</h3>
+        </div>
+        <form role="form" class="form-horizontal">
+        <div class="form-group">
+          <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="send-form-address" class="col-sm-2 control-label">Secret:</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="send-form-address" ng-model="data.secret" placeholder="Enter secret"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="send-form-address" class="col-sm-2 control-label">Destination:</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="send-form-address" ng-model="data.destination" placeholder="Enter Destination address"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="send-form-address" class="col-sm-2 control-label">Currency:</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="send-form-address" ng-model="data.currency" placeholder="Enter currency code"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="send-form-address" class="col-sm-2 control-label">Issuer:</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="send-form-address" ng-model="data.issuer" placeholder="Enter issuer (blank for XLM)"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="send-form-address" class="col-sm-2 control-label">Amount:</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="send-form-address" ng-model="data.amount" placeholder="Enter amount"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="send-form-address" class="col-sm-2 control-label">Memo:</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="send-form-address" ng-model="data.memo" placeholder="Enter memo"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="sendPayment()">Send!</button>
+        </div>
+        </form>
+        <div class="row">
+          <div class="col-xs-12">
+            <pre>{{data.result}}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Trust Line Widget -->
+    <div class="row widget-row">
+      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="CreateTrustLineCtrl">
+        <div class="row">
+           <h3 class="title col-xs-12 text-center">Create a Trust Line</h3>
+        </div>
+        <form role="form" class="form-horizontal">
+        <div class="form-group">
+          <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="send-form-address" class="col-sm-2 control-label">Secret:</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="send-form-address" ng-model="data.secret" placeholder="Enter secret"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="send-form-address" class="col-sm-2 control-label">Issuer:</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="send-form-address" ng-model="data.issuer" placeholder="Enter issuer"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="send-form-address" class="col-sm-2 control-label">Currency:</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="send-form-address" ng-model="data.currency" placeholder="Enter currency"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="send-form-address" class="col-sm-2 control-label">Amount:</label>
+          <div class="col-sm-10">
+            <input class="form-control" type="text" id="send-form-address" ng-model="data.amount" placeholder="Enter amount"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="createTrustLine()">Create Trust Line</button>
+        </div>
+        </form>
+        <div class="row">
+          <div class="col-xs-12">
+            <pre class="col-xs-12">{{data.result}}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Trust Line Widget -->
+    <div class="row widget-row">
+      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="CreateTrustLineCtrl">
+        <div class="row">
+           <h3 class="title col-xs-12 text-center">Create a Trust Line</h3>
+        </div>
+        <form role="form" class="form-horizontal">
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="createTrustLine()">Create Trust Line</button>
+          </div>
+        </form>
+        <div class="row">
+          <div class="col-xs-12">
+            <pre class="col-xs-12">{{data.result}}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,140 @@
+var myApp = angular.module('myApp', []);
+
+// Level 1 - Create a Stellar Address
+function CreateStellarAddressCtrl($scope) {
+    $scope.generate = function () {
+        // PASTE CODE HERE
+        var keypair = StellarLib.Keypair.random();
+        $scope.result = angular.toJson({
+            address: keypair.address(),
+            secret: keypair.seed()
+        }, true);
+    }
+}
+myApp.controller("CreateStellarAddressCtrl", CreateStellarAddressCtrl);
+
+// Level 2 - View Stellar Account Info
+function ViewAccountInfoCtrl($scope, Server) {
+    $scope.viewAccountInfo = function () {
+        // PASTE CODE HERE
+        Server.accounts($scope.data.address)
+            .then(function (account) {
+                $scope.$apply(function () {
+                    $scope.data.result = angular.toJson(account, true);
+                });
+            })
+            .catch(function (err) {
+                $scope.$apply(function () {
+                    $scope.data.result = angular.toJson(err, true);
+                });
+            })
+    }
+}
+myApp.controller("ViewAccountInfoCtrl", ViewAccountInfoCtrl);
+
+// Level 3 - Send a Payment
+function SendPaymentCtrl($scope, Server, HORIZON_HOST) {
+    $scope.data = {
+        address: "gspbxqXqEUZkiCCEFFCN9Vu4FLucdjLLdLcsV6E82Qc1T7ehsTC",
+        secret: "sft74k3MagHG6iF36yeSytQzCCLsJ2Fo9K4YJpQCECwgoUobc4v",
+        sequence: "",
+        destination: "gnLeaAhy4i4qXAjQn7gRSNW7kJ3NF5hv5PaXb2gKnYtsvSgYgg",
+        currency: "XLM",
+        issuer: "",
+        amount: "10000000",
+        memo: "bitchin"
+    };
+    $scope.sendPayment = function () {
+        Server.loadAccount($scope.data.address)
+        .then(function (account) {
+            return new StellarLib.TransactionBuilder(account, {
+                    memo: StellarLib.Memo.text($scope.data.memo)
+                })
+                .addOperation(StellarLib.Operation.payment({
+                    destination: $scope.data.destination,
+                    currency: new StellarLib.Currency($scope.data.currency, $scope.data.issuer),
+                    amount: $scope.data.amount
+                }))
+                .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
+                .build();
+        })
+        .then(function (transaction) {
+            // For now, only Horizon support transaction submission.
+            var server = new StellarLib.Server({host: HORIZON_HOST, port: 3000});
+            return server.submitTransaction(transaction);
+        })
+        .then(function (result) {
+            console.log("here:);")
+            $scope.$apply(function () {
+                console.log(result);
+                $scope.data.result = angular.toJson({
+                    feeCharged: result.feeCharged,
+                    result: result.result
+                }, true);
+            });
+        })
+        .catch(function (err) {
+            $scope.$apply(function () {
+                $scope.data.result = angular.toJson(err, true);
+            });
+        });
+    }
+}
+myApp.controller("SendPaymentCtrl", SendPaymentCtrl);
+
+// Level 4 - Create a Trust Line
+function CreateTrustLineCtrl($scope, Server, HORIZON_HOST) {
+    $scope.data = {
+        address: "gspbxqXqEUZkiCCEFFCN9Vu4FLucdjLLdLcsV6E82Qc1T7ehsTC",
+        secret: "sft74k3MagHG6iF36yeSytQzCCLsJ2Fo9K4YJpQCECwgoUobc4v",
+        sequence: "",
+        issuer: "gnLeaAhy4i4qXAjQn7gRSNW7kJ3NF5hv5PaXb2gKnYtsvSgYgg",
+        currency: "USD",
+        amount: "100"
+    }
+    $scope.createTrustLine = function () {
+        Server.loadAccount($scope.data.address)
+        .then(function (account) {
+            return new StellarLib.TransactionBuilder(account)
+                .addOperation(StellarLib.Operation.changeTrust({
+                    currency: new StellarLib.Currency($scope.data.currency, $scope.data.issuer)
+                }))
+                .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
+                .build();
+        })
+        .then(function (transaction) {
+            console.log(transaction);
+            var server = new StellarLib.Server({host: HORIZON_HOST, port: 3000});
+            return server.submitTransaction(transaction);
+        })
+        .then(function (result) {
+            console.log(result);
+            $scope.$apply(function () {
+                console.log(result);
+                $scope.data.result = angular.toJson({
+                    feeCharged: result.feeCharged,
+                    result: result.result
+                }, true);
+            });
+        })
+        .catch(function (err) {
+            console.log(err.stack);
+            $scope.$apply(function () {
+                $scope.data.result = angular.toJson(err, true);
+            });
+        });
+    }
+};
+myApp.controller("CreateTrustLineCtrl", CreateTrustLineCtrl);
+
+// PASTE HORIZON HOST AND PORT HERE
+myApp.value("HORIZON_HOST", "localhost")
+myApp.value("HORIZON_PORT", 8000)
+// Helper service that holds the server connection
+function Server(HORIZON_HOST, HORIZON_PORT) {
+    return new StellarLib.Server({
+        hostname:HORIZON_HOST,
+        port:HORIZON_PORT
+    });
+}
+myApp.service("Server", Server);

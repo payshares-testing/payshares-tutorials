@@ -1,0 +1,14 @@
+.widget-row {
+    margin: 25px 0 25px 0;
+}
+.widget {
+    border: 1px black solid;
+    padding: 5px;
+}
+.col-centered {
+    float: none;
+    margin: 0 auto;
+}
+.form-input {
+    margin: 5px 0 5px 0;
+}
