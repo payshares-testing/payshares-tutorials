@@ -77,8 +77,7 @@ function SendPaymentCtrl($scope, Server, HORIZON_HOST) {
         })
         .then(function (transaction) {
             // For now, only Horizon support transaction submission.
-            var server = new StellarLib.Server({host: HORIZON_HOST, port: 3000});
-            return server.submitTransaction(transaction);
+            return Server.submitTransaction(transaction);
         })
         .then(function (result) {
             $scope.$apply(function () {
@@ -118,8 +117,7 @@ function CreateTrustLineCtrl($scope, Server, HORIZON_HOST) {
                 .build();
         })
         .then(function (transaction) {
-            var server = new StellarLib.Server({host: HORIZON_HOST, port: 3000});
-            return server.submitTransaction(transaction);
+            return Server.submitTransaction(transaction);
         })
         .then(function (result) {
             $scope.$apply(function () {
