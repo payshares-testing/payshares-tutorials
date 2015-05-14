@@ -161,9 +161,9 @@
 
     <!-- Create Trust Line Widget -->
     <div class="row widget-row">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="CreateTrustLineCtrl">
+      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="StreamAccountTransactionsCtrl">
         <div class="row">
-           <h3 class="title col-xs-12 text-center">Create a Trust Line</h3>
+           <h3 class="title col-xs-12 text-center">Stream Account Transactions</h3>
         </div>
         <form role="form" class="form-horizontal">
           <div class="form-group">
@@ -173,12 +173,14 @@
             </div>
           </div>
           <div class="form-group">
-            <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="createTrustLine()">Create Trust Line</button>
+            <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="streamTransactions()">Stream Transactions</button>
           </div>
         </form>
-        <div class="row">
-          <div class="col-xs-12">
-            <pre class="col-xs-12">{{data.result}}</pre>
+        <div ng-repeat="transaction in data.transactions">
+          <div class="row">
+            <pre class="col-xs-12">
+              {{transaction}}
+            </pre>
           </div>
         </div>
       </div>

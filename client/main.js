@@ -64,9 +64,7 @@ function SendPaymentCtrl($scope, Server, HORIZON_HOST) {
             return server.submitTransaction(transaction);
         })
         .then(function (result) {
-            console.log("here:);")
             $scope.$apply(function () {
-                console.log(result);
                 $scope.data.result = angular.toJson({
                     feeCharged: result.feeCharged,
                     result: result.result
@@ -103,14 +101,11 @@ function CreateTrustLineCtrl($scope, Server, HORIZON_HOST) {
                 .build();
         })
         .then(function (transaction) {
-            console.log(transaction);
             var server = new StellarLib.Server({host: HORIZON_HOST, port: 3000});
             return server.submitTransaction(transaction);
         })
         .then(function (result) {
-            console.log(result);
             $scope.$apply(function () {
-                console.log(result);
                 $scope.data.result = angular.toJson({
                     feeCharged: result.feeCharged,
                     result: result.result
@@ -118,7 +113,6 @@ function CreateTrustLineCtrl($scope, Server, HORIZON_HOST) {
             });
         })
         .catch(function (err) {
-            console.log(err.stack);
             $scope.$apply(function () {
                 $scope.data.result = angular.toJson(err, true);
             });
@@ -127,14 +121,39 @@ function CreateTrustLineCtrl($scope, Server, HORIZON_HOST) {
 };
 myApp.controller("CreateTrustLineCtrl", CreateTrustLineCtrl);
 
+function StreamAccountTransactionsCtrl($scope, Server) {
+    $scope.data = {};
+    var es = null;
+
+    $scope.streamTransactions = function () {
+        if (es != null) {
+            es.close();
+        }
+        $scope.data.transactions = [];
+        es = Server.accounts($scope.data.address, "transactions", {
+            streaming: {
+                onmessage: onTransaction
+            }
+        });
+    }
+
+    var onTransaction = function (transaction) {
+        $scope.$apply(function () {
+            $scope.data.transactions.push(angular.toJson(transaction, true));
+        });
+    }
+}
+myApp.controller("StreamAccountTransactionsCtrl", StreamAccountTransactionsCtrl);
+
 // PASTE HORIZON HOST AND PORT HERE
-myApp.value("HORIZON_HOST", "localhost")
+myApp.value("HORIZON_HOST", "horizon-testnet.stellar.org")
 myApp.value("HORIZON_PORT", 8000)
 // Helper service that holds the server connection
 function Server(HORIZON_HOST, HORIZON_PORT) {
     return new StellarLib.Server({
         hostname:HORIZON_HOST,
-        port:HORIZON_PORT
+        port:HORIZON_PORT,
+        secure: true
     });
 }
 myApp.service("Server", Server);
