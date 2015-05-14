@@ -59,7 +59,7 @@ function SendPaymentCtrl($scope, Server, HORIZON_HOST) {
         currency: "XLM",
         issuer: "",
         amount: "10000000",
-        memo: "bitchin"
+        memo: "This is a text memo"
     };
     $scope.sendPayment = function () {
         Server.loadAccount($scope.data.address)
