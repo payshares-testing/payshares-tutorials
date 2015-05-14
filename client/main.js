@@ -32,6 +32,23 @@ function ViewAccountInfoCtrl($scope, Server) {
 }
 myApp.controller("ViewAccountInfoCtrl", ViewAccountInfoCtrl);
 
+function FriendbotCtrl($scope, Server) {
+    $scope.createAccount = function () {
+        Server.friendbot($scope.data.address)
+            .then(function () {
+                $scope.$apply(function () {
+                    $scope.data.result = "Created!";
+                });
+            })
+            .catch(function (err) {
+                $scope.$apply(function () {
+                    $scope.data.result = angular.toJson(err, true);
+                });
+            })
+    }
+};
+myApp.controller("FriendbotCtrl", FriendbotCtrl);
+
 // Level 3 - Send a Payment
 function SendPaymentCtrl($scope, Server, HORIZON_HOST) {
     $scope.data = {

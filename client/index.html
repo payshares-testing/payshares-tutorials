@@ -11,7 +11,7 @@
     <div class="row widget-row">
       <div class="widget col-xs-6 col-xs-offset-3" ng-controller="CreateStellarAddressCtrl">
         <div class="row">
-           <h3 class="title col-xs-12 text-center">Create a Stellar Address</h3>
+           <h3 class="title col-xs-12 text-center">Generate a Stellar Keypair</h3>
         </div>
         <div class="row">
           <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="generate()">Generate</button>
@@ -19,6 +19,31 @@
         <div class="row">
           <div class="col-xs-12">
             <pre>{{result}}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Account -->
+    <div class="row widget-row">
+      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="FriendbotCtrl">
+        <div class="row">
+           <h3 class="title col-xs-12 text-center">Create a Stellar Account</h3>
+        </div>
+        <form role="form" class="form-horizontal">
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="createAccount()">Friendbot!</button>
+          </div>
+        </form>
+        <div class="row">
+          <div class="col-xs-12">
+            <pre>{{data.result}}</pre>
           </div>
         </div>
       </div>
