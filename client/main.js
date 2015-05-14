@@ -147,7 +147,7 @@ myApp.controller("StreamAccountTransactionsCtrl", StreamAccountTransactionsCtrl)
 
 // PASTE HORIZON HOST AND PORT HERE
 myApp.value("HORIZON_HOST", "horizon-testnet.stellar.org")
-myApp.value("HORIZON_PORT", 8000)
+myApp.value("HORIZON_PORT", 443)
 // Helper service that holds the server connection
 function Server(HORIZON_HOST, HORIZON_PORT) {
     return new StellarLib.Server({
