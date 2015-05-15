@@ -210,5 +210,80 @@
         </div>
       </div>
     </div>
+
+    <!-- Create Offer Widget -->
+    <div class="row widget-row">
+      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="StreamAccountTransactionsCtrl">
+        <div class="row">
+           <h3 class="title col-xs-12 text-center">Create Offer</h3>
+        </div>
+        <form role="form" class="form-horizontal">
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-4 control-label">Address:</label>
+            <div class="col-sm-8">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="gspbxqXqEUZkiCCEFFCN9Vu4FLucdjLLdLcsV6E82Qc1T7ehsTC"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-4 control-label">Secret:</label>
+            <div class="col-sm-8">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.secret" placeholder="sft74k3MagHG6iF36yeSytQzCCLsJ2Fo9K4YJpQCECwgoUobc4v"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-4 control-label">Buy Currency Code (the currency you're buying):</label>
+            <div class="col-sm-8">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.buy.code" placeholder="USD"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-4 control-label">Buy Currency Issuer:</label>
+            <div class="col-sm-8">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.buy.issuer" placeholder="gspbxqXqEUZkiCCEFFCN9Vu4FLucdjLLdLcsV6E82Qc1T7ehsTC"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-4 control-label">Sell Currency Code (the currency you're selling):</label>
+            <div class="col-sm-8">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.sell.code" placeholder="GBP"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-4 control-label">Sell Currency Issuer:</label>
+            <div class="col-sm-8">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.sell.issuer" placeholder="gspbxqXqEUZkiCCEFFCN9Vu4FLucdjLLdLcsV6E82Qc1T7ehsTC"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-4 control-label">Amount your selling:</label>
+            <div class="col-sm-8">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.amount" placeholder="100"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-4 control-label">Price (sell/buy):</label>
+            <div class="col-sm-8">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.price" placeholder="100"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-4 control-label">OfferId (0 to delete the offer):</label>
+            <div class="col-sm-8">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.offerid" placeholder="100"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="createOffer()">Create Offer</button>
+          </div>
+        </form>
+        <div ng-repeat="transaction in data.transactions">
+          <div class="row">
+            <pre class="col-xs-12">
+              {{result}}
+            </pre>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

@@ -121,6 +121,7 @@ function CreateTrustLineCtrl($scope, Server) {
                 .build();
         })
         .then(function (transaction) {
+            console.log(transaction);
             return Server.submitTransaction(transaction);
         })
         .then(function (result) {
@@ -163,6 +164,46 @@ function StreamAccountTransactionsCtrl($scope, Server) {
     }
 }
 myApp.controller("StreamAccountTransactionsCtrl", StreamAccountTransactionsCtrl);
+
+function CreateOfferCtrl($scope) {
+    $scope.data = {
+        buy: {},
+        sell: {}
+    };
+
+    $scope.createOffer = function () {
+        Server.loadAccount($scope.data.address)
+        .then(function (account) {
+            return new StellarLib.TransactionBuilder(account)
+                .addOperation(StellarLib.Operation.createOffer({
+                    takerGets: new StellarLib.Currency($scope.data.sell.currency, $scope.data.sell.issuer),
+                    takerPays: new StellarLib.Currency($scope.data.buy.currency, $scope.data.buy.issuer),
+                    amount: $scope.data.amount,
+                    price: $scope.data.price,
+                    offerId: $scope.data.offerId
+                }))
+                .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
+                .build();
+        })
+        .then(function (transaction) {
+            return Server.submitTransaction(transaction);
+        })
+        .then(function (result) {
+            $scope.$apply(function () {
+                $scope.data.result = angular.toJson({
+                    feeCharged: result.feeCharged,
+                    result: result.result
+                }, true);
+            });
+        })
+        .catch(function (err) {
+            $scope.$apply(function () {
+                $scope.data.result = angular.toJson(err, true);
+            });
+        });
+    }
+}
+myApp.controller("CreateOfferCtrl", CreateOfferCtrl);
 
 // PASTE HORIZON HOST AND PORT HERE
 myApp.value("HORIZON_HOST", "horizon-testnet.stellar.org")
