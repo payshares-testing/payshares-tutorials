@@ -23,6 +23,11 @@ function ViewAccountInfoCtrl($scope, Server) {
                     $scope.data.result = angular.toJson(account, true);
                 });
             })
+            .catch(StellarLib.NotFoundError, function (err) {
+                $scope.$apply(function () {
+                    $scope.data.result = "Account not found.";
+                });
+            })
             .catch(function (err) {
                 $scope.$apply(function () {
                     $scope.data.result = angular.toJson(err, true);
@@ -50,7 +55,7 @@ function FriendbotCtrl($scope, Server) {
 myApp.controller("FriendbotCtrl", FriendbotCtrl);
 
 // Level 3 - Send a Payment
-function SendPaymentCtrl($scope, Server, HORIZON_HOST) {
+function SendPaymentCtrl($scope, Server) {
     $scope.data = {
         address: "gspbxqXqEUZkiCCEFFCN9Vu4FLucdjLLdLcsV6E82Qc1T7ehsTC",
         secret: "sft74k3MagHG6iF36yeSytQzCCLsJ2Fo9K4YJpQCECwgoUobc4v",
@@ -76,7 +81,6 @@ function SendPaymentCtrl($scope, Server, HORIZON_HOST) {
                 .build();
         })
         .then(function (transaction) {
-            // For now, only Horizon support transaction submission.
             return Server.submitTransaction(transaction);
         })
         .then(function (result) {
@@ -97,7 +101,7 @@ function SendPaymentCtrl($scope, Server, HORIZON_HOST) {
 myApp.controller("SendPaymentCtrl", SendPaymentCtrl);
 
 // Level 4 - Create a Trust Line
-function CreateTrustLineCtrl($scope, Server, HORIZON_HOST) {
+function CreateTrustLineCtrl($scope, Server) {
     $scope.data = {
         address: "gspbxqXqEUZkiCCEFFCN9Vu4FLucdjLLdLcsV6E82Qc1T7ehsTC",
         secret: "sft74k3MagHG6iF36yeSytQzCCLsJ2Fo9K4YJpQCECwgoUobc4v",
