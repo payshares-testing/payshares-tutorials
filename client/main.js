@@ -1,20 +1,103 @@
 var myApp = angular.module('myApp', []);
 
 // Level 1 - Create a Stellar Address
-function CreateStellarAddressCtrl($scope) {
+function CreateStellarAddressCtrl($scope, $rootScope, Server, $location, $anchorScroll) {
     $scope.generate = function () {
+        $scope.data = {};
         // PASTE CODE HERE
         var keypair = StellarLib.Keypair.random();
-        $scope.result = angular.toJson({
+        $scope.data.keypair = {
             address: keypair.address(),
             secret: keypair.seed()
-        }, true);
+        };
+    }
+
+    $scope.createAccount = function () {
+        Server.friendbot($scope.data.keypair.address)
+            .then(function () {
+                $scope.$apply(function () {
+                    $scope.data.friendbotresult = "Created!";
+                });
+            })
+            .catch(function (err) {
+                $scope.$apply(function () {
+                    $scope.data.result = angular.toJson(err, true);
+                });
+            });
+    }
+
+    $scope.storeAccount = function () {
+        $rootScope.$broadcast("storeaccount",
+            $scope.data.name, $scope.data.keypair.address, $scope.data.keypair.secret);
+        $location.hash('accountmanager');
+        $anchorScroll();
+        $scope.data = {};
     }
 }
 myApp.controller("CreateStellarAddressCtrl", CreateStellarAddressCtrl);
 
+function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll) {
+    $scope.accounts = [{
+        name: "root",
+        keypair: {
+            address: "gspbxqXqEUZkiCCEFFCN9Vu4FLucdjLLdLcsV6E82Qc1T7ehsTC",
+            secret: "sft74k3MagHG6iF36yeSytQzCCLsJ2Fo9K4YJpQCECwgoUobc4v"
+        }
+    }];
+
+    $scope.storeAccount = function (name, account) {
+        storeAccount($scope.data.name, $scope.data.address, $scope.data.secret);
+        $scope.data = {};
+    }
+
+    $scope.$on("storeaccount", function (event, name, address, secret) {
+        storeAccount(name, address, secret);
+    });
+
+    function storeAccount(name, address, secret) {
+        $scope.accounts.push({
+            name: name,
+            keypair: {
+                address: address,
+                secret: secret
+            }
+        });
+    }
+
+    $scope.sendPayment = function (account) {
+        $rootScope.$broadcast("sendpayment", account.keypair);
+        $location.hash('payment');
+        $anchorScroll();
+    }
+
+    $scope.viewAccount = function (account) {
+        $rootScope.$broadcast("viewaccount", account.keypair);
+        $location.hash('viewaccount');
+        $anchorScroll();
+    }
+
+    $scope.addTrust = function (account) {
+        $rootScope.$broadcast("addtrust", account.keypair);
+        $location.hash('addtrust');
+        $anchorScroll();
+    }
+
+    $scope.createOffer = function (account) {
+        $rootScope.$broadcast("createoffer", account.keypair);
+        $location.hash('createoffer');
+        $anchorScroll();
+    }
+}
+myApp.controller("AccountManagerCtrl", AccountManagerCtrl);
+
 // Level 2 - View Stellar Account Info
 function ViewAccountInfoCtrl($scope, Server) {
+    $scope.data = {};
+
+    $scope.$on("viewaccount", function (event, keypair) {
+        $scope.data.address = keypair.address;
+    });
+
     $scope.viewAccountInfo = function () {
         // PASTE CODE HERE
         Server.accounts($scope.data.address)
@@ -37,47 +120,31 @@ function ViewAccountInfoCtrl($scope, Server) {
 }
 myApp.controller("ViewAccountInfoCtrl", ViewAccountInfoCtrl);
 
-function FriendbotCtrl($scope, Server) {
-    $scope.createAccount = function () {
-        Server.friendbot($scope.data.address)
-            .then(function () {
-                $scope.$apply(function () {
-                    $scope.data.result = "Created!";
-                });
-            })
-            .catch(function (err) {
-                $scope.$apply(function () {
-                    $scope.data.result = angular.toJson(err, true);
-                });
-            })
-    }
-};
-myApp.controller("FriendbotCtrl", FriendbotCtrl);
-
 // Level 3 - Send a Payment
 function SendPaymentCtrl($scope, Server) {
-    $scope.data = {
-        address: "gspbxqXqEUZkiCCEFFCN9Vu4FLucdjLLdLcsV6E82Qc1T7ehsTC",
-        secret: "sft74k3MagHG6iF36yeSytQzCCLsJ2Fo9K4YJpQCECwgoUobc4v",
-        sequence: "",
-        destination: "gnLeaAhy4i4qXAjQn7gRSNW7kJ3NF5hv5PaXb2gKnYtsvSgYgg",
-        currency: "XLM",
-        issuer: "",
-        amount: "10000000",
-        memo: "This is a text memo"
-    };
+    $scope.data = {};
+
+    $scope.$on("sendpayment", function (event, keypair) {
+        $scope.data.address = keypair.address;
+        $scope.data.secret = keypair.secret;
+    });
+
     $scope.sendPayment = function () {
-        Server.loadAccount($scope.data.address)
+        sendPayment($scope.data);
+    }
+
+    function sendPayment(data) {
+        Server.loadAccount(data.address)
         .then(function (account) {
             return new StellarLib.TransactionBuilder(account, {
-                    memo: StellarLib.Memo.text($scope.data.memo)
+                    memo: StellarLib.Memo.text(data.memo)
                 })
                 .addOperation(StellarLib.Operation.payment({
                     destination: $scope.data.destination,
-                    currency: new StellarLib.Currency($scope.data.currency, $scope.data.issuer),
+                    currency: new StellarLib.Currency(data.currency, data.issuer),
                     amount: $scope.data.amount
                 }))
-                .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
+                .addSigner(StellarLib.Keypair.fromSeed(data.secret))
                 .build();
         })
         .then(function (transaction) {
@@ -102,14 +169,13 @@ myApp.controller("SendPaymentCtrl", SendPaymentCtrl);
 
 // Level 4 - Create a Trust Line
 function CreateTrustLineCtrl($scope, Server) {
-    $scope.data = {
-        address: "gspbxqXqEUZkiCCEFFCN9Vu4FLucdjLLdLcsV6E82Qc1T7ehsTC",
-        secret: "sft74k3MagHG6iF36yeSytQzCCLsJ2Fo9K4YJpQCECwgoUobc4v",
-        sequence: "",
-        issuer: "gnLeaAhy4i4qXAjQn7gRSNW7kJ3NF5hv5PaXb2gKnYtsvSgYgg",
-        currency: "USD",
-        amount: "100"
-    }
+    $scope.data = {};
+
+    $scope.$on("addtrust", function (event, keypair) {
+        $scope.data.address = keypair.address;
+        $scope.data.secret = keypair.secret;
+    });
+
     $scope.createTrustLine = function () {
         Server.loadAccount($scope.data.address)
         .then(function (account) {
@@ -170,6 +236,11 @@ function CreateOfferCtrl($scope) {
         buy: {},
         sell: {}
     };
+
+    $scope.$on("createoffer", function (event, keypair) {
+        $scope.data.address = keypair.address;
+        $scope.data.secret = keypair.secret;
+    });
 
     $scope.createOffer = function () {
         Server.loadAccount($scope.data.address)

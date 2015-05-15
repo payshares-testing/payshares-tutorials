@@ -12,3 +12,21 @@
 .form-input {
     margin: 5px 0 5px 0;
 }
+
+.account-row {
+    margin-top: 10px;
+}
+
+.account-row.top {
+    margin-top: 0px;
+}
+
+.account-row .shrink {
+    cursor: pointer;
+    float: right;
+    margin-top: 10px;
+}
+
+.account-row .section {
+    font-style: italic;
+}
