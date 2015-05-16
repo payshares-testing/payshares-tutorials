@@ -21,7 +21,7 @@ function CreateStellarAddressCtrl($scope, $rootScope, Server, $location, $anchor
             })
             .catch(function (err) {
                 $scope.$apply(function () {
-                    $scope.data.result = angular.toJson(err, true);
+                    $scope.data.result = err;
                 });
             });
     }
@@ -113,7 +113,7 @@ function ViewAccountInfoCtrl($scope, Server) {
             })
             .catch(function (err) {
                 $scope.$apply(function () {
-                    $scope.data.result = angular.toJson(err, true);
+                    $scope.data.result = err;
                 });
             })
     }
@@ -136,7 +136,7 @@ function SendPaymentCtrl($scope, Server) {
     function sendPayment(data) {
         Server.loadAccount(data.address)
         .then(function (account) {
-            return new StellarLib.TransactionBuilder(account, {
+            var transaction = new StellarLib.TransactionBuilder(account, {
                     memo: StellarLib.Memo.text(data.memo)
                 })
                 .addOperation(StellarLib.Operation.payment({
@@ -146,8 +146,7 @@ function SendPaymentCtrl($scope, Server) {
                 }))
                 .addSigner(StellarLib.Keypair.fromSeed(data.secret))
                 .build();
-        })
-        .then(function (transaction) {
+                console.log(transaction);
             return Server.submitTransaction(transaction);
         })
         .then(function (result) {
@@ -160,7 +159,7 @@ function SendPaymentCtrl($scope, Server) {
         })
         .catch(function (err) {
             $scope.$apply(function () {
-                $scope.data.result = angular.toJson(err, true);
+                $scope.data.result = err;
             });
         });
     }
@@ -200,7 +199,7 @@ function CreateTrustLineCtrl($scope, Server) {
         })
         .catch(function (err) {
             $scope.$apply(function () {
-                $scope.data.result = angular.toJson(err, true);
+                $scope.data.result = err;
             });
         });
     }
@@ -269,7 +268,7 @@ function CreateOfferCtrl($scope) {
         })
         .catch(function (err) {
             $scope.$apply(function () {
-                $scope.data.result = angular.toJson(err, true);
+                $scope.data.result = err;
             });
         });
     }
