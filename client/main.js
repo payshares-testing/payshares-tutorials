@@ -16,12 +16,12 @@ function CreateStellarAddressCtrl($scope, $rootScope, Server, $location, $anchor
         Server.friendbot($scope.data.keypair.address)
             .then(function () {
                 $scope.$apply(function () {
-                    $scope.data.friendbotresult = "Created!";
+                    $scope.data.result = "Created!";
                 });
             })
             .catch(function (err) {
                 $scope.$apply(function () {
-                    $scope.data.result = err;
+                    $scope.data.error = err;
                 });
             });
     }
@@ -36,7 +36,7 @@ function CreateStellarAddressCtrl($scope, $rootScope, Server, $location, $anchor
 }
 myApp.controller("CreateStellarAddressCtrl", CreateStellarAddressCtrl);
 
-function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll) {
+function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server) {
     $scope.accounts = [{
         name: "root",
         keypair: {
@@ -60,8 +60,27 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll) {
             keypair: {
                 address: address,
                 secret: secret
-            }
+            },
+            collapsed: true
         });
+    }
+
+    $scope.refreshBalances = function (account) {
+        Server.accounts(account.keypair.address)
+            .then(function (result) {
+                $scope.$apply(function () {
+                    account.balances = result.balances;
+                });
+            });
+    }
+
+    $scope.refreshOffers = function (account) {
+        Server.offers(account.keypair.address)
+            .then(function (result) {
+                $scope.$apply(function () {
+                    account.offers = result.offers;
+                });
+            })
     }
 
     $scope.sendPayment = function (account) {
@@ -113,7 +132,7 @@ function ViewAccountInfoCtrl($scope, Server) {
             })
             .catch(function (err) {
                 $scope.$apply(function () {
-                    $scope.data.result = err;
+                    $scope.data.error = err;
                 });
             })
     }
@@ -134,10 +153,12 @@ function SendPaymentCtrl($scope, Server) {
     }
 
     function sendPayment(data) {
+        var memo = data.memo ? StellarLib.Memo.text(data.memo) : StellarLib.Memo.none();
+
         Server.loadAccount(data.address)
         .then(function (account) {
             var transaction = new StellarLib.TransactionBuilder(account, {
-                    memo: StellarLib.Memo.text(data.memo)
+                    memo: memo
                 })
                 .addOperation(StellarLib.Operation.payment({
                     destination: $scope.data.destination,
@@ -146,20 +167,16 @@ function SendPaymentCtrl($scope, Server) {
                 }))
                 .addSigner(StellarLib.Keypair.fromSeed(data.secret))
                 .build();
-                console.log(transaction);
             return Server.submitTransaction(transaction);
         })
         .then(function (result) {
             $scope.$apply(function () {
-                $scope.data.result = angular.toJson({
-                    feeCharged: result.feeCharged,
-                    result: result.result
-                }, true);
+                $scope.data.result = angular.toJson(result, true);
             });
         })
         .catch(function (err) {
             $scope.$apply(function () {
-                $scope.data.result = err;
+                $scope.data.error = err;
             });
         });
     }
@@ -186,7 +203,6 @@ function CreateTrustLineCtrl($scope, Server) {
                 .build();
         })
         .then(function (transaction) {
-            console.log(transaction);
             return Server.submitTransaction(transaction);
         })
         .then(function (result) {
@@ -199,7 +215,7 @@ function CreateTrustLineCtrl($scope, Server) {
         })
         .catch(function (err) {
             $scope.$apply(function () {
-                $scope.data.result = err;
+                $scope.data.error = err;
             });
         });
     }
@@ -214,10 +230,12 @@ function StreamAccountTransactionsCtrl($scope, Server) {
         if (es != null) {
             es.close();
         }
+        $scope.data.error = null;
         $scope.data.transactions = [];
         es = Server.accounts($scope.data.address, "transactions", {
             streaming: {
-                onmessage: onTransaction
+                onmessage: onTransaction,
+                onerror: onError
             }
         });
     }
@@ -225,6 +243,16 @@ function StreamAccountTransactionsCtrl($scope, Server) {
     var onTransaction = function (transaction) {
         $scope.$apply(function () {
             $scope.data.transactions.push(angular.toJson(transaction, true));
+        });
+    }
+
+    var onError = function (err) {
+        if (es != null) {
+            es.close();
+            es = null;
+        }
+        $scope.$apply(function () {
+            $scope.data.error = err;
         });
     }
 }
@@ -276,14 +304,14 @@ function CreateOfferCtrl($scope) {
 myApp.controller("CreateOfferCtrl", CreateOfferCtrl);
 
 // PASTE HORIZON HOST AND PORT HERE
-myApp.value("HORIZON_HOST", "horizon-testnet.stellar.org")
-myApp.value("HORIZON_PORT", 443)
+myApp.value("HORIZON_HOST", "localhost")
+myApp.value("HORIZON_PORT", 8000)
 // Helper service that holds the server connection
 function Server(HORIZON_HOST, HORIZON_PORT) {
     return new StellarLib.Server({
         hostname:HORIZON_HOST,
         port:HORIZON_PORT,
-        secure: true
+        secure: false
     });
 }
 myApp.service("Server", Server);

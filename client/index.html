@@ -31,12 +31,12 @@
             <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="createAccount()">Fund with Friendbot!</button>
           </div>
           <div class="row">
-            <div class="col-xs-12" ng-show="data.friendbotresult">
-              <pre>{{data.friendbotresult}}</pre>
+            <div class="col-xs-12" ng-show="data.result || data.error">
+              <pre>{{data.result || data.error}}</pre>
             </div>
           </div>
         </div>
-        <div ng-show="data.friendbotresult == 'Created!'">
+        <div ng-show="data.result == 'Created!'">
           <div class="row">
             <h4 class="title col-xs-12 text-center">Store the account for future reference</h4>
           </div>
@@ -89,13 +89,17 @@
         <h3 class="title col-xs-12 text-center" ng-show="accounts.length">Stored Accounts</h3>
         <div class="row">
           <div class="col-xs-12 account-row" ng-class="{top: $index==0}" ng-repeat="account in accounts">
-            <a class="shrink" ng-click="account.collapsed = !account.collapsed">{{account.collapsed ? '[ - ]' : '[ + ]'}}</a>
+            <a class="shrink" ng-click="account.collapsed = !account.collapsed">{{!account.collapsed ? '[ - ]' : '[ + ]'}}</a>
             <h4>{{account.name}}</h4>
-            <div class="content" ng-show="account.collapsed">
+            <div class="content" ng-show="!account.collapsed">
+              <a ng-click="accounts.splice($index,1)">[remove]</a>
               <p class="section">keypair</p>
               <pre>{{account.keypair | json : spacing}}</pre>
-              <p class="section">balances</p>
-              <p>TODO</p>
+              <p class="section">balances <a ng-click="refreshBalances(account)">[refresh]</a></p>
+              <div class="section" ng-repeat="balance in account.balances">
+                <p>{{balance}}</p>
+              </div>
+              <p class="section">offers [TODO]</p>
               <p class="section">actions</p>
               <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="viewAccount(account)">View Account</button>
               <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="sendPayment(account)">Send Payment</button>
@@ -125,9 +129,9 @@
             <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="viewAccountInfo()">View Account Info</button>
           </div>
         </form>
-        <div class="row" ng-show="data.result">
+        <div class="row" ng-show="data.result || data.error">
           <div class="col-xs-12">
-            <pre>{{data.result}}</pre>
+            <pre>{{data.result || data.error}}</pre>
           </div>
         </div>
       </div>
@@ -187,9 +191,9 @@
           <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="sendPayment()">Send!</button>
         </div>
         </form>
-        <div class="row" ng-show="data.result">
+        <div class="row" ng-show="data.result || data.error">
           <div class="col-xs-12">
-            <pre>{{data.result}}</pre>
+            <pre>{{data.result || data.error}}</pre>
           </div>
         </div>
       </div>
@@ -237,9 +241,9 @@
           <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="createTrustLine()">Create Trust Line</button>
         </div>
         </form>
-        <div class="row" ng-show="data.result">
+        <div class="row" ng-show="data.result || data.error">
           <div class="col-xs-12">
-            <pre class="col-xs-12">{{data.result}}</pre>
+            <pre class="col-xs-12">{{data.result || data.error}}</pre>
           </div>
         </div>
       </div>
@@ -269,6 +273,9 @@
               {{transaction}}
             </pre>
           </div>
+        </div>
+        <div ng-show="data.error">
+          {{data.error}}
         </div>
       </div>
     </div>
