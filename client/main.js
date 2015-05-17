@@ -1,7 +1,15 @@
+/**
+* This demo hosted at https://github.com/stellar/stellar-tutorials/tree/master/client
+*/
 var myApp = angular.module('myApp', []);
 
-// Level 1 - Create a Stellar Address
+// Level 1 - Create a new Stellar Address and create an account on the testnet
 function CreateStellarAddressCtrl($scope, $rootScope, Server, $location, $anchorScroll) {
+
+    /**
+    * Create a new, randomly generated keypair. The public half of the key is the stellar
+    * address, and the private half is the account's secret key.
+    */
     $scope.generate = function () {
         $scope.data = {};
         // PASTE CODE HERE
@@ -36,7 +44,14 @@ function CreateStellarAddressCtrl($scope, $rootScope, Server, $location, $anchor
 }
 myApp.controller("CreateStellarAddressCtrl", CreateStellarAddressCtrl);
 
+/**
+* Helps manage created accounts. Easily see account balances, name accounts, and quickly
+* pre fill in address and secret for actions on the account.
+*/
 function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server) {
+    /**
+    * Add the root account as the default stored account.
+    */
     $scope.accounts = [{
         name: "root",
         keypair: {
@@ -50,6 +65,9 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
         $scope.data = {};
     }
 
+    /**
+    * Got a request to store the account.
+    */
     $scope.$on("storeaccount", function (event, name, address, secret) {
         storeAccount(name, address, secret);
     });
@@ -65,6 +83,9 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
         });
     }
 
+    /**
+    * Lookup the account by address and show the account's balances.
+    */
     $scope.refreshBalances = function (account) {
         Server.accounts(account.keypair.address)
             .then(function (result) {
@@ -74,6 +95,9 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
             });
     }
 
+    /**
+    * Lookup the account by address and show the account's offers.
+    */
     $scope.refreshOffers = function (account) {
         Server.offers(account.keypair.address)
             .then(function (result) {
@@ -83,24 +107,36 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
             })
     }
 
+    /**
+    * Fill in the given account's address and secret in the payment widget.
+    */
     $scope.sendPayment = function (account) {
         $rootScope.$broadcast("sendpayment", account.keypair);
         $location.hash('payment');
         $anchorScroll();
     }
 
+    /**
+    * Fill in the given account's address and secret in the view account widget.
+    */
     $scope.viewAccount = function (account) {
         $rootScope.$broadcast("viewaccount", account.keypair);
         $location.hash('viewaccount');
         $anchorScroll();
     }
 
+    /**
+    * Fill in the given account's address and secret in the add trust widget.
+    */
     $scope.addTrust = function (account) {
         $rootScope.$broadcast("addtrust", account.keypair);
         $location.hash('addtrust');
         $anchorScroll();
     }
 
+    /**
+    * Fill in the given account's address and secret in the create offer widget.
+    */
     $scope.createOffer = function (account) {
         $rootScope.$broadcast("createoffer", account.keypair);
         $location.hash('createoffer');
@@ -113,12 +149,17 @@ myApp.controller("AccountManagerCtrl", AccountManagerCtrl);
 function ViewAccountInfoCtrl($scope, Server) {
     $scope.data = {};
 
+    /**
+    * Received a broadcast to automatically fill in the keypair into the form.
+    */
     $scope.$on("viewaccount", function (event, keypair) {
         $scope.data.address = keypair.address;
     });
 
+    /**
+    * Lookup the account by address and show the data.
+    */
     $scope.viewAccountInfo = function () {
-        // PASTE CODE HERE
         Server.accounts($scope.data.address)
             .then(function (account) {
                 $scope.$apply(function () {
@@ -143,6 +184,9 @@ myApp.controller("ViewAccountInfoCtrl", ViewAccountInfoCtrl);
 function SendPaymentCtrl($scope, Server) {
     $scope.data = {};
 
+    /**
+    * Received a broadcast to automatically fill in the keypair into the form.
+    */
     $scope.$on("sendpayment", function (event, keypair) {
         $scope.data.address = keypair.address;
         $scope.data.secret = keypair.secret;
@@ -153,18 +197,21 @@ function SendPaymentCtrl($scope, Server) {
     }
 
     function sendPayment(data) {
-        var memo = data.memo ? StellarLib.Memo.text(data.memo) : StellarLib.Memo.none();
-
+        // first load the account from the server (stellarlib uses the account's latest sequence #)
         Server.loadAccount(data.address)
         .then(function (account) {
+            // create a new transaction using StellarLib's TransactionBuilder
             var transaction = new StellarLib.TransactionBuilder(account, {
-                    memo: memo
+                    // add a memo to the transaction if they gave one
+                    memo: data.memo ? StellarLib.Memo.text(data.memo) : ""
                 })
+                // add a "payment" operation to the transaction
                 .addOperation(StellarLib.Operation.payment({
                     destination: $scope.data.destination,
                     currency: new StellarLib.Currency(data.currency, data.issuer),
                     amount: $scope.data.amount
                 }))
+                // sign the transaction with the account's secret key
                 .addSigner(StellarLib.Keypair.fromSeed(data.secret))
                 .build();
             return Server.submitTransaction(transaction);
@@ -183,45 +230,6 @@ function SendPaymentCtrl($scope, Server) {
 }
 myApp.controller("SendPaymentCtrl", SendPaymentCtrl);
 
-// Level 4 - Create a Trust Line
-function CreateTrustLineCtrl($scope, Server) {
-    $scope.data = {};
-
-    $scope.$on("addtrust", function (event, keypair) {
-        $scope.data.address = keypair.address;
-        $scope.data.secret = keypair.secret;
-    });
-
-    $scope.createTrustLine = function () {
-        Server.loadAccount($scope.data.address)
-        .then(function (account) {
-            return new StellarLib.TransactionBuilder(account)
-                .addOperation(StellarLib.Operation.changeTrust({
-                    currency: new StellarLib.Currency($scope.data.currency, $scope.data.issuer)
-                }))
-                .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
-                .build();
-        })
-        .then(function (transaction) {
-            return Server.submitTransaction(transaction);
-        })
-        .then(function (result) {
-            $scope.$apply(function () {
-                $scope.data.result = angular.toJson({
-                    feeCharged: result.feeCharged,
-                    result: result.result
-                }, true);
-            });
-        })
-        .catch(function (err) {
-            $scope.$apply(function () {
-                $scope.data.error = err;
-            });
-        });
-    }
-};
-myApp.controller("CreateTrustLineCtrl", CreateTrustLineCtrl);
-
 function StreamAccountTransactionsCtrl($scope, Server) {
     $scope.data = {};
     var es = null;
@@ -232,6 +240,8 @@ function StreamAccountTransactionsCtrl($scope, Server) {
         }
         $scope.data.error = null;
         $scope.data.transactions = [];
+        // call the "accounts" endpoint and pass it streaming event handlers
+        // this will return the "EventSource" object that we can close after we're through
         es = Server.accounts($scope.data.address, "transactions", {
             streaming: {
                 onmessage: onTransaction,
@@ -258,28 +268,86 @@ function StreamAccountTransactionsCtrl($scope, Server) {
 }
 myApp.controller("StreamAccountTransactionsCtrl", StreamAccountTransactionsCtrl);
 
+
+// Level 4 - Create a Trust Line
+function CreateTrustLineCtrl($scope, Server) {
+    $scope.data = {};
+
+    /**
+    * Received a broadcast to automatically fill in the keypair into the form.
+    */
+    $scope.$on("addtrust", function (event, keypair) {
+        $scope.data.address = keypair.address;
+        $scope.data.secret = keypair.secret;
+    });
+
+    $scope.createTrustLine = function () {
+        // first load the account from the server
+        Server.loadAccount($scope.data.address)
+        .then(function (account) {
+            // transactionbuilder uses the account's latest sequence #
+            return new StellarLib.TransactionBuilder(account)
+                // add a "changeTrust" operation to the transaction
+                .addOperation(StellarLib.Operation.changeTrust({
+                    currency: new StellarLib.Currency($scope.data.currency, $scope.data.issuer)
+                }))
+                // sign the transaction with the account's secret
+                .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
+                .build();
+        })
+        .then(function (transaction) {
+            return Server.submitTransaction(transaction);
+        })
+        .then(function (result) {
+            $scope.$apply(function () {
+                $scope.data.result = angular.toJson({
+                    feeCharged: result.feeCharged,
+                    result: result.result
+                }, true);
+            });
+        })
+        .catch(function (err) {
+            $scope.$apply(function () {
+                $scope.data.error = err;
+            });
+        });
+    }
+};
+myApp.controller("CreateTrustLineCtrl", CreateTrustLineCtrl);
+
 function CreateOfferCtrl($scope) {
     $scope.data = {
         buy: {},
         sell: {}
     };
 
+    /**
+    * Received a broadcast to automatically fill in the keypair into the form.
+    */
     $scope.$on("createoffer", function (event, keypair) {
         $scope.data.address = keypair.address;
         $scope.data.secret = keypair.secret;
     });
 
     $scope.createOffer = function () {
+        // load the latest sequence number for the account
         Server.loadAccount($scope.data.address)
         .then(function (account) {
             return new StellarLib.TransactionBuilder(account)
+                // add a "createOffer" operation to the transaction
                 .addOperation(StellarLib.Operation.createOffer({
+                    // the currency we're selling
                     takerGets: new StellarLib.Currency($scope.data.sell.currency, $scope.data.sell.issuer),
+                    // the currency we're buying
                     takerPays: new StellarLib.Currency($scope.data.buy.currency, $scope.data.buy.issuer),
+                    // the amount we're selling
                     amount: $scope.data.amount,
+                    // the exchange rate we're charging
                     price: $scope.data.price,
+                    // an offer ID, 0 for delete the offer
                     offerId: $scope.data.offerId
                 }))
+                // sign the transaction with the account's secret key
                 .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
                 .build();
         })
