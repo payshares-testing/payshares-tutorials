@@ -137,6 +137,37 @@
       </div>
     </div>
 
+    <!-- Create Trust Line Widget -->
+    <div class="row widget-row">
+      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="StreamAccountTransactionsCtrl">
+        <div class="row">
+           <h3 class="title col-xs-12 text-center">Stream Account Transactions</h3>
+           <p class="text-center">Demostrates how to use the streaming account transactions API</p>
+        </div>
+        <form role="form" class="form-horizontal">
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="streamTransactions()">Stream Transactions</button>
+          </div>
+        </form>
+        <div ng-repeat="transaction in data.transactions">
+          <div class="row">
+            <pre class="col-xs-12">
+              {{transaction}}
+            </pre>
+          </div>
+        </div>
+        <div ng-show="data.error">
+          {{data.error}}
+        </div>
+      </div>
+    </div>
+
     <!-- Send a Payment Widget -->
     <div class="row widget-row" id="payment">
       <div class="widget col-xs-6 col-xs-offset-3" ng-controller="SendPaymentCtrl">
@@ -245,37 +276,6 @@
           <div class="col-xs-12">
             <pre class="col-xs-12">{{data.result || data.error}}</pre>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Create Trust Line Widget -->
-    <div class="row widget-row">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="StreamAccountTransactionsCtrl">
-        <div class="row">
-           <h3 class="title col-xs-12 text-center">Stream Account Transactions</h3>
-           <p class="text-center">Demostrates how to use the streaming account transactions API</p>
-        </div>
-        <form role="form" class="form-horizontal">
-          <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="streamTransactions()">Stream Transactions</button>
-          </div>
-        </form>
-        <div ng-repeat="transaction in data.transactions">
-          <div class="row">
-            <pre class="col-xs-12">
-              {{transaction}}
-            </pre>
-          </div>
-        </div>
-        <div ng-show="data.error">
-          {{data.error}}
         </div>
       </div>
     </div>
