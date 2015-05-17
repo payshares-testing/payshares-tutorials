@@ -143,6 +143,12 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
         $anchorScroll();
     }
 
+    $scope.authorizeTrust = function (account) {
+        $rootScope.$broadcast("authorizetrust", account.keypair);
+        $location.hash('authorizetrust');
+        $anchorScroll();
+    }
+
     /**
     * Fill in the given account's address and secret in the create offer widget.
     */
@@ -215,7 +221,8 @@ function SetOptionsCtrl($scope, Server) {
         getClearFlags: function () {
             return this.clearFlags.AUTH_REQUIRED_FLAG | this.clearFlags.AUTH_REVOCABLE_FLAG;
         },
-        thresholds: {}
+        thresholds: {},
+        signer: {}
     };
 
     $scope.setOptions = function () {
@@ -230,7 +237,13 @@ function SetOptionsCtrl($scope, Server) {
                     options.clearFlags = $scope.data.getClearFlags();
                 }
                 if (Object.getOwnPropertyNames($scope.data.thresholds).length) {
-                    options.thresholds = $scope.data.thresholds
+                    options.thresholds = $scope.data.thresholds;
+                }
+                if (Object.getOwnPropertyNames($scope.data.signer).length) {
+                    options.signer = $scope.data.signer;
+                }
+                if ($scope.data.homeDomain) {
+                    options.homeDomain = $scope.data.homeDomain;
                 }
                 var transaction = new StellarLib.TransactionBuilder(account)
                     .addOperation(StellarLib.Operation.setOptions(options))
@@ -375,10 +388,7 @@ function CreateTrustLineCtrl($scope, Server) {
         })
         .then(function (result) {
             $scope.$apply(function () {
-                $scope.data.result = angular.toJson({
-                    feeCharged: result.feeCharged,
-                    result: result.result
-                }, true);
+                $scope.data.result = angular.toJson(result, true);
             });
         })
         .catch(function (err) {
@@ -389,6 +399,54 @@ function CreateTrustLineCtrl($scope, Server) {
     }
 };
 myApp.controller("CreateTrustLineCtrl", CreateTrustLineCtrl);
+
+// Level 5 - Authorize Trust Line
+function AuthorizeTrustCtrl($scope, Server) {
+    $scope.data = {};
+
+    /**
+    * Received a broadcast to automatically fill in the keypair into the form.
+    */
+    $scope.$on("authorizetrust", function (event, keypair) {
+        $scope.data.address = keypair.address;
+        $scope.data.secret = keypair.secret;
+    });
+
+    $scope.authorizeTrust = function () {
+        // first load the account from the server
+        Server.loadAccount($scope.data.address)
+        .then(function (account) {
+            console.log($scope.data.authorize);
+            // transactionbuilder uses the account's latest sequence #
+            var transaction = new StellarLib.TransactionBuilder(account)
+                // add a "changeTrust" operation to the transaction
+                .addOperation(StellarLib.Operation.allowTrust({
+                    trustor: $scope.data.trustor,
+                    currencyCode: $scope.data.currency,
+                    authorize: $scope.data.authorize
+                }))
+                // sign the transaction with the account's secret
+                .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
+                .build();
+            console.log(transaction);
+            return transaction;
+        })
+        .then(function (transaction) {
+            return Server.submitTransaction(transaction);
+        })
+        .then(function (result) {
+            $scope.$apply(function () {
+                $scope.data.result = angular.toJson(result, true);
+            });
+        })
+        .catch(function (err) {
+            $scope.$apply(function () {
+                $scope.data.error = err.stack || err;
+            });
+        });
+    }
+};
+myApp.controller("AuthorizeTrustCtrl", AuthorizeTrustCtrl);
 
 function CreateOfferCtrl($scope) {
     $scope.data = {
