@@ -108,20 +108,29 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
     }
 
     /**
-    * Fill in the given account's address and secret in the payment widget.
+    * Fill in the given account's address and secret in the view account widget.
     */
-    $scope.sendPayment = function (account) {
-        $rootScope.$broadcast("sendpayment", account.keypair);
-        $location.hash('payment');
+    $scope.viewAccount = function (account) {
+        $rootScope.$broadcast("viewaccount", account.keypair);
+        $location.hash('viewaccount');
         $anchorScroll();
     }
 
     /**
     * Fill in the given account's address and secret in the view account widget.
     */
-    $scope.viewAccount = function (account) {
-        $rootScope.$broadcast("viewaccount", account.keypair);
-        $location.hash('viewaccount');
+    $scope.setOptions = function (account) {
+        $rootScope.$broadcast("setoptions", account.keypair);
+        $location.hash('setoptions');
+        $anchorScroll();
+    }
+
+    /**
+    * Fill in the given account's address and secret in the payment widget.
+    */
+    $scope.sendPayment = function (account) {
+        $rootScope.$broadcast("sendpayment", account.keypair);
+        $location.hash('payment');
         $anchorScroll();
     }
 
@@ -179,6 +188,62 @@ function ViewAccountInfoCtrl($scope, Server) {
     }
 }
 myApp.controller("ViewAccountInfoCtrl", ViewAccountInfoCtrl);
+
+function SetOptionsCtrl($scope, Server) {
+    /**
+    * Received a broadcast to automatically fill in the keypair into the form.
+    */
+    $scope.$on("setoptions", function (event, keypair) {
+        $scope.data.address = keypair.address;
+        $scope.data.secret = keypair.secret;
+    });
+
+    $scope.data = {
+        // setting flags is an int, a bitwise & of all the flags for the account
+        setFlags: {
+            AUTH_REQUIRED_FLAG: 0,
+            AUTH_REVOCABLE_FLAG: 0
+        },
+        getSetFlags: function () {
+            return this.setFlags.AUTH_REQUIRED_FLAG | this.setFlags.AUTH_REVOCABLE_FLAG;
+        },
+        // claer flags is an int, a bitwise & of all the flags for the account
+        clearFlags: {
+            AUTH_REQUIRED_FLAG: 0,
+            AUTH_REVOCABLE_FLAG: 0
+        },
+        getClearFlags: function () {
+            return this.clearFlags.AUTH_REQUIRED_FLAG | this.clearFlags.AUTH_REVOCABLE_FLAG;
+        }
+    };
+
+    $scope.setOptions = function () {
+        Server.accounts($scope.data.address)
+            .then(function (account) {
+                var transaction = new StellarLib.TransactionBuilder(account)
+                    .addOperation(StellarLib.Operation.setOptions({
+                        setFlags: $scope.data.getSetFlags(),
+                        clearFlags: $scope.data.getClearFlags()
+                    }))
+                    // sign the transaction with the account's secret key
+                    .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
+                    .build();
+                console.log(transaction);
+                return Server.submitTransaction(transaction);
+            })
+            .then(function (result) {
+                $scope.$apply(function () {
+                    $scope.data.result = angular.toJson(result, true);
+                });
+            })
+            .catch(function (err) {
+                $scope.$apply(function () {
+                    $scope.data.error = err.stack;
+                });
+            });
+    }
+}
+myApp.controller("SetOptionsCtrl", SetOptionsCtrl);
 
 // Level 3 - Send a Payment
 function SendPaymentCtrl($scope, Server) {

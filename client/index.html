@@ -102,6 +102,7 @@
               <p class="section">offers [TODO]</p>
               <p class="section">actions</p>
               <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="viewAccount(account)">View Account</button>
+              <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="setOptions(account)">Set Options</button>
               <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="sendPayment(account)">Send Payment</button>
               <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="addTrust(account)">Add Trustline</button>
               <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="createOffer(account)">Create Offer</button>
@@ -137,7 +138,7 @@
       </div>
     </div>
 
-    <!-- Create Trust Line Widget -->
+    <!-- Stream Account Transactions -->
     <div class="row widget-row">
       <div class="widget col-xs-6 col-xs-offset-3" ng-controller="StreamAccountTransactionsCtrl">
         <div class="row">
@@ -167,6 +168,61 @@
         </div>
       </div>
     </div>
+
+    <!-- Set Options Widget -->
+    <div class="row widget-row" id="setoptions">
+      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="SetOptionsCtrl">
+        <div class="row">
+           <h3 class="title col-xs-12 text-center">Set Options</h3>
+           <p class="text-center">Set various account options</p>
+        </div>
+        <form role="form" class="form-horizontal">
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-2 control-label">Secret:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" id="send-form-address" ng-model="data.secret" placeholder="Enter secret"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-2 control-label">Set Flags:</label>
+            <div class="col-sm-10">
+              <label>AUTH_REQUIRED_FLAG:
+                <input class="form-control" type="checkbox" ng-model="data.setFlags.AUTH_REQUIRED_FLAG"  ng-true-value="1" ng-false-value="0"/>
+              </label><br/>
+              <label>AUTH_REVOCABLE_FLAG:
+                <input class="form-control" type="checkbox" ng-model="data.setFlags.AUTH_REVOCABLE_FLAG" ng-true-value="2" ng-false-value="0"/>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="send-form-address" class="col-sm-2 control-label">Clear Flags:</label>
+            <div class="col-sm-10">
+              <label>AUTH_REQUIRED_FLAG:
+                <input class="form-control" type="checkbox" ng-model="data.clearFlags.AUTH_REQUIRED_FLAG" ng-true-value="1" ng-false-value="0"/>
+              </label><br/>
+              <label>AUTH_REVOCABLE_FLAG:
+                <input class="form-control" type="checkbox" ng-model="data.clearFlags.AUTH_REVOCABLE_FLAG" ng-true-value="2" ng-false-value="0"/>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="setOptions()">Submit</button>
+          </div>
+        </form>
+        <div class="row" ng-show="data.result || data.error">
+          <div class="col-xs-12">
+            <pre>{{data.result || data.error}}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <!-- Send a Payment Widget -->
     <div class="row widget-row" id="payment">
