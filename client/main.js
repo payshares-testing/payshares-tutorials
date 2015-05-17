@@ -182,7 +182,7 @@ function ViewAccountInfoCtrl($scope, Server) {
             })
             .catch(function (err) {
                 $scope.$apply(function () {
-                    $scope.data.error = err;
+                    $scope.data.error = err.stack || err;
                 });
             })
     }
@@ -214,17 +214,26 @@ function SetOptionsCtrl($scope, Server) {
         },
         getClearFlags: function () {
             return this.clearFlags.AUTH_REQUIRED_FLAG | this.clearFlags.AUTH_REVOCABLE_FLAG;
-        }
+        },
+        thresholds: {}
     };
 
     $scope.setOptions = function () {
         Server.accounts($scope.data.address)
             .then(function (account) {
+                // we'll only set the options the user has given
+                var options = {};
+                if ($scope.data.getSetFlags()) {
+                    options.setFlags = $scope.data.getSetFlags();
+                }
+                if ($scope.data.getClearFlags()) {
+                    options.clearFlags = $scope.data.getClearFlags();
+                }
+                if (Object.getOwnPropertyNames($scope.data.thresholds).length) {
+                    options.thresholds = $scope.data.thresholds
+                }
                 var transaction = new StellarLib.TransactionBuilder(account)
-                    .addOperation(StellarLib.Operation.setOptions({
-                        setFlags: $scope.data.getSetFlags(),
-                        clearFlags: $scope.data.getClearFlags()
-                    }))
+                    .addOperation(StellarLib.Operation.setOptions(options))
                     // sign the transaction with the account's secret key
                     .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
                     .build();
@@ -237,8 +246,9 @@ function SetOptionsCtrl($scope, Server) {
                 });
             })
             .catch(function (err) {
+                console.log(err);
                 $scope.$apply(function () {
-                    $scope.data.error = err.stack;
+                    $scope.data.error = err.stack || err;
                 });
             });
     }
@@ -288,7 +298,7 @@ function SendPaymentCtrl($scope, Server) {
         })
         .catch(function (err) {
             $scope.$apply(function () {
-                $scope.data.error = err;
+                $scope.data.error = err.stack || err;
             });
         });
     }
@@ -327,7 +337,7 @@ function StreamAccountTransactionsCtrl($scope, Server) {
             es = null;
         }
         $scope.$apply(function () {
-            $scope.data.error = err;
+            $scope.data.error = err.stack || err;
         });
     }
 }
