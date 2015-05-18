@@ -5,6 +5,11 @@
     border: 1px black solid;
     padding: 5px;
 }
+.widget .shrink {
+    cursor: pointer;
+    float: right;
+    margin-top: 10px;
+}
 .col-centered {
     float: none;
     margin: 0 auto;
