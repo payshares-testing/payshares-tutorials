@@ -99,7 +99,7 @@
               <a class="shrink" ng-click="account.collapsed = !account.collapsed">{{!account.collapsed ? '[ - ]' : '[ + ]'}}</a>
               <h4>{{account.name}}</h4>
               <div class="content" ng-show="!account.collapsed">
-                <a ng-click="accounts.splice($index,1)">[remove]</a>
+                <a ng-click="removeAccount($index)">[remove]</a>
                 <p class="section">keypair</p>
                 <pre>{{account.keypair | json : spacing}}</pre>
                 <p class="section">balances <a ng-click="refreshBalances(account)">[refresh]</a></p>

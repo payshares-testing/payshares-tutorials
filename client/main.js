@@ -52,17 +52,45 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
     /**
     * Add the root account as the default stored account.
     */
-    $scope.accounts = [{
+    $scope.accounts = [];
+    // store previously stored accounts
+    restoreAccounts();
+    $scope.accounts.unshift({
         name: "root",
         keypair: {
             address: "gspbxqXqEUZkiCCEFFCN9Vu4FLucdjLLdLcsV6E82Qc1T7ehsTC",
             secret: "sft74k3MagHG6iF36yeSytQzCCLsJ2Fo9K4YJpQCECwgoUobc4v"
         }
-    }];
+    });
 
     $scope.storeAccount = function (name, account) {
         storeAccount($scope.data.name, $scope.data.address, $scope.data.secret);
         $scope.data = {};
+    }
+
+    $scope.removeAccount = function (index) {
+        $scope.accounts.splice(index,1);
+        saveAccounts();
+    }
+
+    function saveAccounts() {
+        var accounts;
+        // dont save the root account
+        if ($scope.accounts[0] && $scope.accounts[0].keypair.secret == "sft74k3MagHG6iF36yeSytQzCCLsJ2Fo9K4YJpQCECwgoUobc4v") {
+            accounts = $scope.accounts.slice(1);
+        } else {
+            accounts = $scope.accounts;
+        }
+        localStorage.accountStorage = angular.toJson({
+            accounts: accounts
+        });
+    }
+
+    function restoreAccounts() {
+        var accountStorage = angular.fromJson(localStorage.accountStorage);
+        if (accountStorage) {
+            $scope.accounts = accountStorage.accounts;
+        }
     }
 
     /**
@@ -81,6 +109,7 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
             },
             collapsed: true
         });
+        saveAccounts();
     }
 
     /**
@@ -561,15 +590,17 @@ function CreateOfferCtrl($scope, Server) {
 }
 myApp.controller("CreateOfferCtrl", CreateOfferCtrl);
 
-// PASTE HORIZON HOST AND PORT HERE
-myApp.value("HORIZON_HOST", "horizon-testnet.stellar.org")
-myApp.value("HORIZON_PORT", 443)
+// FOR TESTNET, USE BELOW. Make sure to set secure: true in the config
+// myApp.value("HORIZON_HOST", "horizon-testnet.stellar.org")
+// myApp.value("HORIZON_PORT", 443)
+myApp.value("HORIZON_HOST", "localhost")
+myApp.value("HORIZON_PORT", 8000)
 // Helper service that holds the server connection
 function Server(HORIZON_HOST, HORIZON_PORT) {
     return new StellarLib.Server({
         hostname:HORIZON_HOST,
         port:HORIZON_PORT,
-        secure: true
+        secure: false // true for the testnet
     });
 }
 myApp.service("Server", Server);
