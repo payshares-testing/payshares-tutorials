@@ -340,7 +340,7 @@ function StreamAccountTransactionsCtrl($scope, Server) {
 
     var onTransaction = function (transaction) {
         $scope.$apply(function () {
-            $scope.data.transactions.push(angular.toJson(transaction, true));
+            $scope.data.transactions.push(transaction, true);
         });
     }
 

@@ -174,10 +174,10 @@
               <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="streamTransactions()">Stream Transactions</button>
             </div>
           </form>
-          <div ng-repeat="transaction in data.transactions">
+          <div ng-repeat="transaction in data.transactions track by $index">
             <div class="row">
               <pre class="col-xs-12">
-                {{transaction}}
+                {{transaction | json : spacing}}
               </pre>
             </div>
           </div>
