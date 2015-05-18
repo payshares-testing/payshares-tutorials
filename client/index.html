@@ -44,9 +44,9 @@
             </div>
             <form role="form" class="form-horizontal">
               <div class="form-group">
-                <label for="send-form-address" class="col-sm-2 control-label">Name:</label>
+                <label class="col-sm-2 control-label">Name:</label>
                 <div class="col-sm-10">
-                  <input class="form-control" type="text" id="send-form-address" ng-model="data.name" placeholder="Enter name for the account"/>
+                  <input class="form-control" type="text" ng-model="data.name" placeholder="Enter name for the account"/>
                 </div>
               </div>
               <div class="row">
@@ -71,21 +71,21 @@
           </div>
           <form role="form" class="form-horizontal">
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Name:</label>
+              <label class="col-sm-2 control-label">Name:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.name" placeholder="Enter address"/>
+                <input class="form-control" type="text" ng-model="data.name" placeholder="Enter address"/>
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+              <label class="col-sm-2 control-label">Address:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+                <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Secret:</label>
+              <label class="col-sm-2 control-label">Secret:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.secret" placeholder="Enter secret"/>
+                <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
               </div>
             </div>
             <div class="form-group">
@@ -110,7 +110,8 @@
                 <p class="section">actions</p>
                 <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="viewAccount(account)">View Account</button>
                 <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="setOptions(account)">Set Options</button>
-                <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="sendPayment(account)">Send Payment</button>
+                <button class="col-xs-12 col-md-4 btn btn-md btn-primary text-center account-button" ng-click="sendPayment(account)">Send Simple Payment</button>
+                <button class="col-xs-12 col-md-4 btn btn-md btn-primary text-center account-button" ng-click="sendPathPayment(account)">Send Path Payment</button>
                 <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="addTrust(account)">Add Trustline</button>
                 <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="authorizeTrust(account)">Authorize Trust</button>
                 <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="createOffer(account)">Create Offer</button>
@@ -134,9 +135,9 @@
           </div>
           <form role="form" class="form-horizontal">
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+              <label class="col-sm-2 control-label">Address:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+                <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
               </div>
             </div>
             <div class="form-group">
@@ -165,9 +166,9 @@
           </div>
           <form role="form" class="form-horizontal">
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+              <label class="col-sm-2 control-label">Address:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+                <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
               </div>
             </div>
             <div class="form-group">
@@ -201,19 +202,19 @@
           </div>
           <form role="form" class="form-horizontal">
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+              <label class="col-sm-2 control-label">Address:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+                <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Secret:</label>
+              <label class="col-sm-2 control-label">Secret:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.secret" placeholder="Enter secret"/>
+                <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Set Flags:</label>
+              <label class="col-sm-2 control-label">Set Flags:</label>
               <div class="col-sm-10">
                 <label>AUTH_REQUIRED_FLAG:
                   <input class="form-control" type="checkbox" ng-model="data.setFlags.AUTH_REQUIRED_FLAG"  ng-true-value="1" ng-false-value="0"/>
@@ -224,7 +225,7 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Clear Flags:</label>
+              <label class="col-sm-2 control-label">Clear Flags:</label>
               <div class="col-sm-10">
                 <label>AUTH_REQUIRED_FLAG:
                   <input class="form-control" type="checkbox" ng-model="data.clearFlags.AUTH_REQUIRED_FLAG" ng-true-value="1" ng-false-value="0"/>
@@ -235,7 +236,7 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Thresholds:</label>
+              <label class="col-sm-2 control-label">Thresholds:</label>
               <div class="col-sm-10">
                 <div class="row">
                   <div class="col-sm-12">
@@ -264,7 +265,7 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Add signer:</label>
+              <label class="col-sm-2 control-label">Add signer:</label>
               <div class="col-sm-10">
                 <div class="row">
                   <div class="col-sm-12">
@@ -281,9 +282,9 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Federation Domain:</label>
+              <label class="col-sm-2 control-label">Federation Domain:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.homeDomain" placeholder="Where to look up stellar.txt"/>
+                <input class="form-control" type="text" ng-model="data.homeDomain" placeholder="Where to look up stellar.txt"/>
               </div>
             </div>
             <div class="form-group">
@@ -305,57 +306,142 @@
       <div class="widget col-xs-6 col-xs-offset-3" ng-controller="SendPaymentCtrl">
         <div class="col-sm-12">
           <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
-          <h3 class="title text-center">Send a Payment</h3>
+          <h3 class="title text-center">Send a Simple Payment</h3>
         </div>
         <div ng-show="!collapsed">
           <div class="col-sm-12">
-            <p class="text-center">Send a simple payment to another account</p>
+            <p class="text-center">Sends the same currency/issuer from one account to another.</p>
           </div>
           <form role="form" class="form-horizontal">
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+            <label class="col-sm-2 control-label">Address:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+              <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Secret:</label>
+            <label class="col-sm-2 control-label">Secret:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.secret" placeholder="Enter secret"/>
+              <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Destination:</label>
+            <label class="col-sm-2 control-label">Destination:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.destination" placeholder="Enter Destination address"/>
+              <input class="form-control" type="text" ng-model="data.destination" placeholder="Enter Destination address"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Currency:</label>
+            <label class="col-sm-2 control-label">Currency:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.currency" placeholder="Enter currency code"/>
+              <input class="form-control" type="text" ng-model="data.currency" placeholder="Enter currency code"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Issuer:</label>
+            <label class="col-sm-2 control-label">Issuer:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.issuer" placeholder="Enter issuer (blank for XLM)"/>
+              <input class="form-control" type="text" ng-model="data.issuer" placeholder="Enter issuer (blank for XLM)"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Amount:</label>
+            <label class="col-sm-2 control-label">Amount:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.amount" placeholder="Enter amount"/>
+              <input class="form-control" type="text" ng-model="data.amount" placeholder="Enter amount"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Memo:</label>
+            <label class="col-sm-2 control-label">Memo:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.memo" placeholder="Enter a text memo"/>
+              <input class="form-control" type="text" ng-model="data.memo" placeholder="Enter a text memo"/>
             </div>
           </div>
           <div class="form-group">
             <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="sendPayment()">Submit Transaction</button>
+          </div>
+          </form>
+          <div class="row" ng-show="data.result || data.error">
+            <div class="col-xs-12">
+              <pre>{{data.result || data.error}}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Send a Path Payment Widget -->
+    <div class="row widget-row" id="pathpayment">
+      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="SendPathPaymentCtrl">
+        <div class="col-sm-12">
+          <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
+          <h3 class="title text-center">Send a Path Payment</h3>
+        </div>
+        <div ng-show="!collapsed">
+          <div class="col-sm-12">
+            <p class="text-center">Sends a payment to another account using a different source account than the currency the destination receives. If there's an offer on the network for the source currency / destination currency, the payment can be sent, otherwise it needs to go through  paths of more than 1 offer. This is why you need to specify a send max, the amount of source currency to send may fluctuate based on what offer is selected.</p>
+          </div>
+          <form role="form" class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Address:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Secret:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Source Currency:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" ng-model="data.sourcecurrency" placeholder="The currency code to pay with"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Issuer:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" ng-model="data.sourceissuer" placeholder="The source currency issuer"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Send Max:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="number" ng-model="data.sendmax" placeholder="The max amount of this currency to send"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Destination:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" ng-model="data.destination" placeholder="Enter Destination address"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Currency:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" ng-model="data.destcurrency" placeholder="Enter currency destination gets"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Issuer:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" ng-model="data.destissuer" placeholder="The destination currency issuer"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Amount:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" ng-model="data.amount" placeholder="Amount of destination currency to send"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Memo:</label>
+            <div class="col-sm-10">
+              <input class="form-control" type="text" ng-model="data.memo" placeholder="Enter a text memo"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="sendPathPayment()">Submit Transaction</button>
           </div>
           </form>
           <div class="row" ng-show="data.result || data.error">
@@ -380,33 +466,33 @@
           </div>
           <form role="form" class="form-horizontal">
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+            <label class="col-sm-2 control-label">Address:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+              <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Secret:</label>
+            <label class="col-sm-2 control-label">Secret:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.secret" placeholder="Enter secret"/>
+              <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Issuer:</label>
+            <label class="col-sm-2 control-label">Issuer:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.issuer" placeholder="Enter issuer"/>
+              <input class="form-control" type="text" ng-model="data.issuer" placeholder="Enter issuer"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Currency:</label>
+            <label class="col-sm-2 control-label">Currency:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.currency" placeholder="Enter currency"/>
+              <input class="form-control" type="text" ng-model="data.currency" placeholder="Enter currency"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Amount:</label>
+            <label class="col-sm-2 control-label">Amount:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.amount" placeholder="Enter amount"/>
+              <input class="form-control" type="text" ng-model="data.amount" placeholder="Enter amount"/>
             </div>
           </div>
           <div class="form-group">
@@ -435,31 +521,31 @@
           </div>
           <form role="form" class="form-horizontal">
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+            <label class="col-sm-2 control-label">Address:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+              <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Secret:</label>
+            <label class="col-sm-2 control-label">Secret:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.secret" placeholder="Enter secret"/>
+              <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Authorized Account:</label>
+            <label class="col-sm-2 control-label">Authorized Account:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.trustor" placeholder="Enter issuer"/>
+              <input class="form-control" type="text" ng-model="data.trustor" placeholder="Enter issuer"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Currency Code:</label>
+            <label class="col-sm-2 control-label">Currency Code:</label>
             <div class="col-sm-10">
-              <input class="form-control" type="text" id="send-form-address" ng-model="data.currency" placeholder="Enter currency"/>
+              <input class="form-control" type="text" ng-model="data.currency" placeholder="Enter currency"/>
             </div>
           </div>
           <div class="form-group">
-            <label for="send-form-address" class="col-sm-2 control-label">Authorize:</label>
+            <label class="col-sm-2 control-label">Authorize:</label>
             <div class="col-sm-10">
                 <label>
                   <input type="radio" ng-model="data.authorize" value="true">
@@ -486,7 +572,7 @@
 
     <!-- Create Offer Widget -->
     <div class="row widget-row" id="createoffer">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="StreamAccountTransactionsCtrl">
+      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="CreateOfferCtrl">
         <div class="col-sm-12">
           <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
           <h3 class="title text-center">Create Offer</h3>
@@ -494,69 +580,67 @@
         <div ng-show="!collapsed">
           <form role="form" class="form-horizontal">
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Address:</label>
+              <label class="col-sm-2 control-label">Address:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.address" placeholder="Enter address"/>
+                <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Secret:</label>
+              <label class="col-sm-2 control-label">Secret:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.secret" placeholder="Enter secret"/>
+                <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Buy:</label>
+              <label class="col-sm-2 control-label">Buy:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.buy.code" placeholder="The currency code you're buying"/>
+                <input class="form-control" type="text" ng-model="data.buy.code" placeholder="The currency code you're buying"/>
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Issuer:</label>
+              <label class="col-sm-2 control-label">Issuer:</label>
               <div class="col-sm-10">
-                <input ng-disabled="data.buy.code.toLowerCase() == 'xlm'" class="form-control" type="text" id="send-form-address" ng-model="data.buy.issuer" placeholder="The currency's issuer address"/>
+                <input ng-disabled="data.buy.code.toLowerCase() == 'xlm'" class="form-control" type="text" ng-model="data.buy.issuer" placeholder="The currency's issuer address"/>
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Sell:</label>
+              <label class="col-sm-2 control-label">Sell:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.sell.code" placeholder="The currency you have that you're selling"/>
+                <input class="form-control" type="text" ng-model="data.sell.code" placeholder="The currency you have that you're selling"/>
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Issuer:</label>
+              <label class="col-sm-2 control-label">Issuer:</label>
               <div class="col-sm-10">
-                <input ng-disabled="data.sell.code.toLowerCase() == 'xlm'" class="form-control" type="text" id="send-form-address" ng-model="data.sell.issuer" placeholder="The currency's issuer"/>
+                <input ng-disabled="data.sell.code.toLowerCase() == 'xlm'" class="form-control" type="text" ng-model="data.sell.issuer" placeholder="The currency's issuer"/>
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Amount:</label>
+              <label class="col-sm-2 control-label">Amount:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.amount" placeholder="The amount of currency you're selling"/>
+                <input class="form-control" type="text" ng-model="data.amount" placeholder="The amount of currency you're selling"/>
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">Price:</label>
+              <label class="col-sm-2 control-label">Price:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.price" placeholder="The price you're selling for (sell/buy)"/>
+                <input class="form-control" type="text" ng-model="data.price" placeholder="The price you're selling for (sell/buy)"/>
               </div>
             </div>
             <div class="form-group">
-              <label for="send-form-address" class="col-sm-2 control-label">OfferId:</label>
+              <label class="col-sm-2 control-label">OfferId:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" id="send-form-address" ng-model="data.offerid" placeholder="id for the offer (0 to delete the offer)"/>
+                <input class="form-control" type="text" ng-model="data.offerid" placeholder="id for the offer (0 to delete the offer)"/>
               </div>
             </div>
             <div class="form-group">
               <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="createOffer()">Submit Transaction</button>
             </div>
           </form>
-          <div ng-repeat="transaction in data.transactions">
-            <div class="row">
-              <pre class="col-xs-12">
-                {{result}}
-              </pre>
-            </div>
+          <div class="row" ng-show="data.result || data.error">
+            <pre class="col-xs-12">
+              {{data.result || data.error}}
+            </pre>
           </div>
         </div>
       </div>

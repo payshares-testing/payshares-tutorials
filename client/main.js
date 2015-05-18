@@ -128,9 +128,18 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
     /**
     * Fill in the given account's address and secret in the payment widget.
     */
-    $scope.sendPayment = function (account) {
+    $scope.sendSimplePayment = function (account) {
         $rootScope.$broadcast("sendpayment", account.keypair);
         $location.hash('payment');
+        $anchorScroll();
+    }
+
+    /**
+    * Fill in the given account's address and secret in the payment widget.
+    */
+    $scope.sendPathPayment = function (account) {
+        $rootScope.$broadcast("sendpathpayment", account.keypair);
+        $location.hash('pathpayment');
         $anchorScroll();
     }
 
@@ -318,6 +327,58 @@ function SendPaymentCtrl($scope, Server) {
 }
 myApp.controller("SendPaymentCtrl", SendPaymentCtrl);
 
+// Level 3.5 Send a path payment
+function SendPathPaymentCtrl($scope, Server) {
+    $scope.data = {};
+
+    /**
+    * Received a broadcast to automatically fill in the keypair into the form.
+    */
+    $scope.$on("sendpathpayment", function (event, keypair) {
+        $scope.data.address = keypair.address;
+        $scope.data.secret = keypair.secret;
+    });
+
+    $scope.sendPathPayment = function () {
+        sendPathPayment($scope.data);
+    }
+
+    function sendPathPayment(data) {
+        // first load the account from the server (stellarlib uses the account's latest sequence #)
+        Server.loadAccount(data.address)
+        .then(function (account) {
+            // create a new transaction using StellarLib's TransactionBuilder
+            var transaction = new StellarLib.TransactionBuilder(account, {
+                    // add a memo to the transaction if they gave one
+                    memo: data.memo ? StellarLib.Memo.text(data.memo) : ""
+                })
+                // add a "payment" operation to the transaction
+                .addOperation(StellarLib.Operation.pathPayment({
+                    sendCurrency: new StellarLib.Currency(data.sourcecurrency, data.sourceissuer),
+                    sendMax: data.sendmax,
+                    destination: data.destination,
+                    destCurrency: new StellarLib.Currency(data.destcurrency, data.destissuer),
+                    destAmount: data.amount
+                }))
+                // sign the transaction with the account's secret key
+                .addSigner(StellarLib.Keypair.fromSeed(data.secret))
+                .build();
+            return Server.submitTransaction(transaction);
+        })
+        .then(function (result) {
+            $scope.$apply(function () {
+                $scope.data.result = angular.toJson(result, true);
+            });
+        })
+        .catch(function (err) {
+            $scope.$apply(function () {
+                $scope.data.error = err.stack || err;
+            });
+        });
+    }
+}
+myApp.controller("SendPathPaymentCtrl", SendPathPaymentCtrl);
+
 function StreamAccountTransactionsCtrl($scope, Server) {
     $scope.data = {};
     var es = null;
@@ -448,7 +509,7 @@ function AuthorizeTrustCtrl($scope, Server) {
 };
 myApp.controller("AuthorizeTrustCtrl", AuthorizeTrustCtrl);
 
-function CreateOfferCtrl($scope) {
+function CreateOfferCtrl($scope, Server) {
     $scope.data = {
         buy: {},
         sell: {}
@@ -466,13 +527,13 @@ function CreateOfferCtrl($scope) {
         // load the latest sequence number for the account
         Server.loadAccount($scope.data.address)
         .then(function (account) {
-            return new StellarLib.TransactionBuilder(account)
+            var transaction = new StellarLib.TransactionBuilder(account)
                 // add a "createOffer" operation to the transaction
                 .addOperation(StellarLib.Operation.createOffer({
                     // the currency we're selling
-                    takerGets: new StellarLib.Currency($scope.data.sell.currency, $scope.data.sell.issuer),
+                    takerGets: new StellarLib.Currency($scope.data.sell.code, $scope.data.sell.issuer),
                     // the currency we're buying
-                    takerPays: new StellarLib.Currency($scope.data.buy.currency, $scope.data.buy.issuer),
+                    takerPays: new StellarLib.Currency($scope.data.buy.code, $scope.data.buy.issuer),
                     // the amount we're selling
                     amount: $scope.data.amount,
                     // the exchange rate we're charging
@@ -483,21 +544,17 @@ function CreateOfferCtrl($scope) {
                 // sign the transaction with the account's secret key
                 .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
                 .build();
-        })
-        .then(function (transaction) {
             return Server.submitTransaction(transaction);
         })
         .then(function (result) {
             $scope.$apply(function () {
-                $scope.data.result = angular.toJson({
-                    feeCharged: result.feeCharged,
-                    result: result.result
-                }, true);
+                $scope.data.result = angular.toJson(result, true);
             });
         })
         .catch(function (err) {
+            console.error(err.stack);
             $scope.$apply(function () {
-                $scope.data.result = err;
+                $scope.data.error = err.stack || err;
             });
         });
     }
