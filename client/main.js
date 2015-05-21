@@ -233,6 +233,41 @@ function ViewAccountInfoCtrl($scope, Server) {
 }
 myApp.controller("ViewAccountInfoCtrl", ViewAccountInfoCtrl);
 
+function ViewOffersCtrl($scope, Server) {
+    /**
+    * Received a broadcast to automatically fill in the keypair into the form.
+    */
+    $scope.$on("viewoffers", function (event, keypair) {
+        $scope.data.address = keypair.address;
+        $scope.data.secret = keypair.secret;
+    });
+
+    $scope.data = {};
+
+    /**
+    * Lookup the offers by address and show the data.
+    */
+    $scope.viewOffers = function () {
+        Server.accounts($scope.data.address, "offers")
+            .then(function (offers) {
+                $scope.$apply(function () {
+                    $scope.data.result = angular.toJson(offers, true);
+                });
+            })
+            .catch(StellarLib.NotFoundError, function (err) {
+                $scope.$apply(function () {
+                    $scope.data.result = "Account not found.";
+                });
+            })
+            .catch(function (err) {
+                $scope.$apply(function () {
+                    $scope.data.error = err.stack || err;
+                });
+            })
+    }
+}
+myApp.controller("ViewOffersCtrl", ViewOffersCtrl);
+
 function SetOptionsCtrl($scope, Server) {
     /**
     * Received a broadcast to automatically fill in the keypair into the form.

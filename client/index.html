@@ -153,6 +153,37 @@
       </div>
     </div>
 
+    <!-- View Stellar Account Offers Widget -->
+    <div class="row widget-row" id="viewoffers">
+      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="ViewOffersCtrl">
+        <div class="col-sm-12">
+          <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
+           <h3 class="title text-center">View Account Offers</h3>
+        </div>
+        <div ng-show="!collapsed">
+          <div class="col-sm-12">
+             <p class="text-center">View account offers</p>
+          </div>
+          <form role="form" class="form-horizontal">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Address:</label>
+              <div class="col-sm-10">
+                <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="viewOffers()">View Account Offers</button>
+            </div>
+          </form>
+          <div class="row" ng-show="data.result || data.error">
+            <div class="col-xs-12">
+              <pre>{{data.result || data.error}}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Stream Account Transactions -->
     <div class="row widget-row">
       <div class="widget col-xs-6 col-xs-offset-3" ng-controller="StreamAccountTransactionsCtrl">
@@ -377,7 +408,7 @@
         </div>
         <div ng-show="!collapsed">
           <div class="col-sm-12">
-            <p class="text-center">Sends a payment to another account using a different source account than the currency the destination receives. If there's an offer on the network for the source currency / destination currency, the payment can be sent, otherwise it needs to go through  paths of more than 1 offer. This is why you need to specify a send max, the amount of source currency to send may fluctuate based on what offer is selected.</p>
+            <p class="text-center">Sends a payment to another account using a different source currency than the currency the destination receives. If there's an offer on the network for the source currency / destination currency, the payment can be sent, otherwise it needs to go through  paths of more than 1 offer. This is why you need to specify a send max, the amount of source currency to send may fluctuate based on what offer is selected.</p>
           </div>
           <form role="form" class="form-horizontal">
           <div class="form-group">
