@@ -626,16 +626,16 @@ function CreateOfferCtrl($scope, Server) {
 myApp.controller("CreateOfferCtrl", CreateOfferCtrl);
 
 // FOR TESTNET, USE BELOW. Make sure to set secure: true in the config
-// myApp.value("HORIZON_HOST", "horizon-testnet.stellar.org")
-// myApp.value("HORIZON_PORT", 443)
-myApp.value("HORIZON_HOST", "localhost")
-myApp.value("HORIZON_PORT", 8000)
+myApp.value("HORIZON_HOST", "horizon-testnet.stellar.org")
+myApp.value("HORIZON_PORT", 443)
+// myApp.value("HORIZON_HOST", "localhost")
+// myApp.value("HORIZON_PORT", 8000)
 // Helper service that holds the server connection
 function Server(HORIZON_HOST, HORIZON_PORT) {
     return new StellarLib.Server({
         hostname:HORIZON_HOST,
         port:HORIZON_PORT,
-        secure: false // true for the testnet
+        secure: true // true for the testnet
     });
 }
 myApp.service("Server", Server);
