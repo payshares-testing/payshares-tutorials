@@ -35,3 +35,9 @@
 .account-row .section {
     font-style: italic;
 }
+
+.balance {
+    border: 1px black solid;
+    padding: 3px;
+    margin-bottom: 3px;
+}

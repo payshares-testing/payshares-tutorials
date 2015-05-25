@@ -104,9 +104,31 @@
                 <pre>{{account.keypair | json : spacing}}</pre>
                 <p class="section">balances <a ng-click="refreshBalances(account)">[refresh]</a></p>
                 <div class="section" ng-repeat="balance in account.balances">
-                  <p>{{balance}}</p>
+                  <div class="balance" ng-switch on="balance.currency_type">
+                    <div ng-switch-when="native">
+                      <span>Currency: XLM</span><br/>
+                      <span>Balance: {{balance.balance}}</span>
+                    </div>
+                    <div ng-switch-default>
+                      <span>Currency: {{balance.currency_code}}</span><br/>
+                      <span>Issuer: {{balance.currency_issuer}}</span><br/>
+                      <span>Balance: {{balance.balance}}</span>
+                    </div>
+                  </div>
                 </div>
-                <p class="section">offers [TODO]</p>
+                <p class="section">offers <a ng-click="refreshOffers(account)">[refresh]</a></p>
+                <div class="section" ng-repeat="offer in account.offers">
+                  <div class="balance" ng-switch on="offer.currency_type">
+                    <span><u>Taker Pays</u></span><br/>
+                    <span>Currency: {{offer.taker_pays.currency_type == 'native' ? 'XLM' : offer.taker_pays.currency_code}}</span><br/>
+                    <span ng-if="offer.taker_pays.currency_type != 'native'">Issuer: {{offer.taker_pays.currency_issuer}}<br/></span>
+                    <span><u>Taker Gets</u></span><br/>
+                    <span>Currency: {{offer.taker_gets.currency_type == 'native' ? 'XLM' : offer.taker_gets.currency_code}}</span><br/>
+                    <span ng-if="offer.taker_gets.currency_type != 'native'">Issuer: {{offer.taker_gets.currency_issuer}}<br/></span>
+                    <span>Amount: {{offer.amount}}</span><br/>
+                    <span>Price: {{offer.price_f}}</span><br/>
+                  </div>
+                </div>
                 <p class="section">actions</p>
                 <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="viewAccount(account)">View Account</button>
                 <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="setOptions(account)">Set Options</button>

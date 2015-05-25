@@ -128,10 +128,10 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
     * Lookup the account by address and show the account's offers.
     */
     $scope.refreshOffers = function (account) {
-        Server.offers(account.keypair.address)
+        Server.accounts(account.keypair.address, "offers")
             .then(function (result) {
                 $scope.$apply(function () {
-                    account.offers = result.offers;
+                    account.offers = result.records;
                 });
             })
     }
