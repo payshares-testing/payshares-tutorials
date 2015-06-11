@@ -1,0 +1,43 @@
+.widget-row {
+    margin: 25px 0 25px 0;
+}
+.widget {
+    border: 1px black solid;
+    padding: 5px;
+}
+.widget .shrink {
+    cursor: pointer;
+    float: right;
+    margin-top: 10px;
+}
+.col-centered {
+    float: none;
+    margin: 0 auto;
+}
+.form-input {
+    margin: 5px 0 5px 0;
+}
+
+.account-row {
+    margin-top: 10px;
+}
+
+.account-row.top {
+    margin-top: 0px;
+}
+
+.account-row .shrink {
+    cursor: pointer;
+    float: right;
+    margin-top: 10px;
+}
+
+.account-row .section {
+    font-style: italic;
+}
+
+.balance {
+    border: 1px black solid;
+    padding: 3px;
+    margin-bottom: 3px;
+}
