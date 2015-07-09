@@ -6,14 +6,49 @@
 @import 'node_modules/solar-stellarorg/styles/index';
 //@import 'node_modules/solar-stellarorg-pages/styles/index';
 
+//basic structure
+.container {
+	margin: auto;
+	padding: 0.5em;
+	@media screen and (min-width: 768px) {
+		max-width: 740px;
+	}
+}
+
+//basic forms & buttons
+button {
+	@extend .s-button;
+}
+
+input[type="text"],
+input[type="number"],
+{
+	width: 100%;
+	margin: 0.25em 0 0.5em;
+}
+
+label {
+	font-weight: bold;
+}
+
+pre {
+    background: $s-color-neutral2;
+    color: #fff;
+    border-radius: 3px;
+    font-size: 0.88em;
+}
+
+
+
 
 // andrew's styles
 .widget-row {
     margin: 25px 0 25px 0;
 }
 .widget {
-    border: 1px black solid;
-    padding: 5px;
+    border: 1px $s-color-neutral5 solid;
+    border-radius: 3px;
+    padding: 1em;
 }
 .widget .shrink {
     cursor: pointer;

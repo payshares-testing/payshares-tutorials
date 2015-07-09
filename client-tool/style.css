@@ -414,7 +414,8 @@ a {
 
 input,
 select,
-.s-button {
+.s-button,
+button {
   padding: 0;
   margin: 0;
   border-radius: 0;
@@ -422,7 +423,8 @@ select,
   position: relative; }
   input:focus,
   select:focus,
-  .s-button:focus {
+  .s-button:focus,
+  button:focus {
     z-index: 1; }
 
 input {
@@ -433,12 +435,12 @@ p {
   margin: 0;
   margin-bottom: 1em; }
 
-.s-button {
+.s-button, button {
   display: inline-block;
   margin: 0;
   border-radius: 3px; }
 
-.s-button.is-disabled {
+.s-button.is-disabled, button.is-disabled {
   cursor: not-allowed; }
 
 .s-inputGroup {
@@ -468,16 +470,16 @@ p {
   display: flex;
   flex-direction: row; }
 
-.s-buttonGroup .s-button:not(:last-child) {
+.s-buttonGroup .s-button:not(:last-child), .s-buttonGroup button:not(:last-child) {
   margin-right: -1px; }
 
-.s-buttonGroup .s-button {
+.s-buttonGroup .s-button, .s-buttonGroup button {
   border-radius: 0; }
 
-.s-buttonGroup .s-button:first-child {
+.s-buttonGroup .s-button:first-child, .s-buttonGroup button:first-child {
   border-radius: 3px 0 0 3px; }
 
-.s-buttonGroup .s-button:last-child {
+.s-buttonGroup .s-button:last-child, .s-buttonGroup button:last-child {
   border-radius: 0 3px 3px 0; }
 
 .S-flex-row {
@@ -589,7 +591,7 @@ p {
 .S-flexUtil-self-flexEnd {
   align-self: flex-end; }
 
-.s-button,
+.s-button, button,
 input,
 select {
   padding: 0.35em 0.6666em 0.3166em 0.6666em;
@@ -597,18 +599,18 @@ select {
   border: 1px solid #AAA;
   background: #fff; }
 
-.s-button {
+.s-button, button {
   border: 1px solid #0699c2;
   background: #08b5e5;
   color: #EEE; }
-  .s-button:hover {
+  .s-button:hover, button:hover {
     border: 1px solid #057ea0;
     background: #07a2ce; }
-  .s-button:active {
+  .s-button:active, button:active {
     border: 1px solid #04637d;
     background: #0690b7; }
 
-.s-button, .s-button:link {
+.s-button, button, .s-button:link, button:link {
   text-decoration: none; }
 
 input:focus,
@@ -619,7 +621,7 @@ input:focus,
 select:focus {
   border: 1px solid #034051; }
 
-.s-button:focus,
+.s-button:focus, button:focus,
 input:focus,
 select:focus {
   outline-width: 0; }
@@ -633,12 +635,12 @@ select {
   cursor: pointer;
   background: #fff url('data:image/svg+xml;utf8,<svg width="7" height="4" viewBox="0 0 14 8" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"><path d="M0 0l7 8 7-8h-14z" sketch:type="MSShapeGroup" fill="#AAA"/></svg>') no-repeat calc(100% - 7px) 50%; }
 
-.s-button:hover,
+.s-button:hover, button:hover,
 input:hover,
 select:hover {
   z-index: 1; }
 
-.s-button:focus,
+.s-button:focus, button:focus,
 input:focus,
 select:focus {
   z-index: 2; }
@@ -664,6 +666,7 @@ select:focus {
 .s-inputGroup input,
 .s-inputGroup select,
 .s-inputGroup .s-button,
+.s-inputGroup button,
 .s-inputGroup__item--tag,
 .s-inputGroup__item--tagFlat {
   padding-left: 12px;
@@ -718,12 +721,34 @@ body {
 .kelp-theme-sdf {
   content: 'it works!'; }
 
+.container {
+  margin: auto;
+  padding: 0.5em; }
+  @media screen and (min-width: 768px) {
+    .container {
+      max-width: 740px; } }
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  margin: 0.25em 0 0.5em; }
+
+label {
+  font-weight: bold; }
+
+pre {
+  background: #4e4e4e;
+  color: #fff;
+  border-radius: 3px;
+  font-size: 0.88em; }
+
 .widget-row {
   margin: 25px 0 25px 0; }
 
 .widget {
-  border: 1px black solid;
-  padding: 5px; }
+  border: 1px #d2d2d2 solid;
+  border-radius: 3px;
+  padding: 1em; }
 
 .widget .shrink {
   cursor: pointer;
