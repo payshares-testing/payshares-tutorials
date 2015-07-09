@@ -1,701 +1,467 @@
 <html>
-  <head>
-    <script type="text/javascript" src="angular.min.js"></script>
-    <script type="text/javascript" src="./stellar-lib.js"></script>
-    <script type="text/javascript" src="./main.js"></script>
-    <link rel="stylesheet" type="text/css" href="./style.css">
-  </head>
-  <body ng-app="myApp" class="container ng-scope">
+<head>
+  <script type="text/javascript" src="angular.min.js"></script>
+  <script type="text/javascript" src="./stellar-lib.js"></script>
+  <script type="text/javascript" src="./main.js"></script>
+  <link rel="stylesheet" type="text/css" href="./style.css">
+</head>
+<body ng-app="myApp" class="container ng-scope">
 
-    <!-- Create Stellar Address Widget -->
-    <div class="row widget-row">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="CreateStellarAddressCtrl">
-        <div class="col-sm-12">
-          <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
-          <h2 class="title text-center">Create a new Stellar Account</h2>
-        </div>
-        <div ng-show="!collapsed">
-          <div class="row">
-             <h3 class="title col-xs-12 text-center">Generate a Stellar Keypair</h3>
-             <p class="text-center">Generates a new ED25519 keypair valid to use as a Stellar address/secret</p>
-          </div>
-          <div class="row">
-            <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="generate()">Generate</button>
-          </div>
-          <div class="row" ng-show="data.keypair">
-            <div class="col-xs-12">
-              <pre>{{data.keypair | json : spacing}}</pre>
-            </div>
-          </div>
-          <div ng-show="data.keypair">
-            <div class="row">
-              <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="createAccount()">Fund with Friendbot!</button>
-            </div>
-            <div class="row">
-              <div class="col-xs-12" ng-show="data.result || data.error">
-                <pre>{{data.result || data.error}}</pre>
-              </div>
-            </div>
-          </div>
-          <div ng-show="data.result == 'Created!'">
-            <div class="row">
-              <h4 class="title col-xs-12 text-center">Store the account for future reference</h4>
-            </div>
-            <form role="form" class="form-horizontal">
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Name:</label>
-                <div class="col-sm-10">
-                  <input class="form-control" type="text" ng-model="data.name" placeholder="Enter name for the account"/>
-                </div>
-              </div>
-              <div class="row">
-                <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="storeAccount()">Store Account</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="container">
+        <!-- Create Stellar Address Widget -->
+        <div class="row widget-row">
+            <div class="widget" ng-controller="CreateStellarAddressCtrl">
+                <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
+                <h2 class="title">Create a new Stellar Account</h2>
+                <div ng-show="!collapsed">
+                    <h3 class="title">Generate a Stellar Keypair</h3>
+                    <p>Generates a new ED25519 keypair valid to use as a Stellar address/secret</p>
+                    <button ng-click="generate()">Generate</button>
 
-    <!-- Account Manager -->
-    <div class="row widget-row" id="accountmanager">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="AccountManagerCtrl">
-        <div class="col-sm-12">
-          <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
-          <h2 class="title text-center">Account Manager</h2>
-        </div>
-        <div ng-show="!collapsed">
-          <div class="col-sm-12">
-             <p class="text-center">Used to store accounts for reference</p>
-          </div>
-          <form role="form" class="form-horizontal">
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Name:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.name" placeholder="Enter address"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Address:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Secret:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="storeAccount()">Store Account</button>
-            </div>
-          </form>
-
-          <h3 class="title col-xs-12 text-center" ng-show="accounts.length">Stored Accounts</h3>
-          <div class="row">
-            <div class="col-xs-12 account-row" ng-class="{top: $index==0}" ng-repeat="account in accounts">
-              <a class="shrink" ng-click="account.collapsed = !account.collapsed">{{!account.collapsed ? '[ - ]' : '[ + ]'}}</a>
-              <h4>{{account.name}}</h4>
-              <div class="content" ng-show="!account.collapsed">
-                <a ng-click="removeAccount($index)">[remove]</a>
-                <p class="section">keypair</p>
-                <pre>{{account.keypair | json : spacing}}</pre>
-                <p class="section">balances <a ng-click="refreshBalances(account)">[refresh]</a></p>
-                <div class="section" ng-repeat="balance in account.balances">
-                  <div class="balance" ng-switch on="balance.currency_type">
-                    <div ng-switch-when="native">
-                      <span>Currency: XLM</span><br/>
-                      <span>Balance: {{balance.balance}}</span>
+                    <div class="row" ng-show="data.keypair">
+                        <pre>{{data.keypair | json : spacing}}</pre>
                     </div>
-                    <div ng-switch-default>
-                      <span>Currency: {{balance.currency_code}}</span><br/>
-                      <span>Issuer: {{balance.currency_issuer}}</span><br/>
-                      <span>Balance: {{balance.balance}}</span>
+
+                    <div ng-show="data.keypair">
+                        <button ng-click="createAccount()">Fund with Friendbot!</button>
+                        <div ng-show="data.result || data.error">
+                            <pre>{{data.result || data.error}}</pre>
+                        </div>
                     </div>
-                  </div>
-                </div>
-                <p class="section">offers <a ng-click="refreshOffers(account)">[refresh]</a></p>
-                <div class="section" ng-repeat="offer in account.offers">
-                  <div class="balance" ng-switch on="offer.currency_type">
-                    <span><u>Taker Pays</u></span><br/>
-                    <span>Currency: {{offer.taker_pays.currency_type == 'native' ? 'XLM' : offer.taker_pays.currency_code}}</span><br/>
-                    <span ng-if="offer.taker_pays.currency_type != 'native'">Issuer: {{offer.taker_pays.currency_issuer}}<br/></span>
-                    <span><u>Taker Gets</u></span><br/>
-                    <span>Currency: {{offer.taker_gets.currency_type == 'native' ? 'XLM' : offer.taker_gets.currency_code}}</span><br/>
-                    <span ng-if="offer.taker_gets.currency_type != 'native'">Issuer: {{offer.taker_gets.currency_issuer}}<br/></span>
-                    <span>Amount: {{offer.amount}}</span><br/>
-                    <span>Price: {{offer.price_f}}</span><br/>
-                  </div>
-                </div>
-                <p class="section">actions</p>
-                <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="viewAccount(account)">View Account</button>
-                <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="setOptions(account)">Set Options</button>
-                <button class="col-xs-12 col-md-4 btn btn-md btn-primary text-center account-button" ng-click="sendSimplePayment(account)">Send Simple Payment</button>
-                <button class="col-xs-12 col-md-4 btn btn-md btn-primary text-center account-button" ng-click="sendPathPayment(account)">Send Path Payment</button>
-                <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="addTrust(account)">Add Trustline</button>
-                <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="authorizeTrust(account)">Authorize Trust</button>
-                <button class="col-xs-12 col-md-3 btn btn-md btn-primary text-center account-button" ng-click="createOffer(account)">Create Offer</button>
-              </div>
-            </div>
-          </div>
+
+                    <div ng-show="data.result == 'Created!'">
+                        <h4 class="title">Store the account for future reference</h4>
+                        <form role="form">
+                          <label class="control-label">Name:</label>
+                          <input class="form-control" type="text" ng-model="data.name" placeholder="Enter name for the account"/>
+                          <button ng-click="storeAccount()">Store Account</button>
+                        </form>
+                     </div>
+                 </div>
+             </div>
         </div>
-      </div>
-    </div>
+
+        <!-- Account Manager -->
+        <div class="row widget-row" id="accountmanager">
+            <div class="widget " ng-controller="AccountManagerCtrl">
+                <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
+                <h2 class="title">Account Manager</h2>
+                <div ng-show="!collapsed">
+
+                    <p class="text-center">Used to store accounts for reference</p>
+                    <form role="form">
+                        <label class="control-label">Name:</label>
+                        <input class="form-control" type="text" ng-model="data.name" placeholder="Enter address"/>
+
+                        <label class="control-label">Address:</label>
+                        <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
+
+                        <label class="control-label">Secret:</label>
+
+                        <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
+
+                        <button ng-click="storeAccount()">Store Account</button>
+                    </form>
+
+                    <h3 class="title" ng-show="accounts.length">Stored Accounts</h3>
+                    <div ng-class="{top: $index==0}" ng-repeat="account in accounts">
+                        <a class="shrink" ng-click="account.collapsed = !account.collapsed">{{!account.collapsed ? '[ - ]' : '[ + ]'}}</a>
+                        <h4>{{account.name}}</h4>
+                        <div class="content" ng-show="!account.collapsed">
+                            <a ng-click="removeAccount($index)">[remove]</a>
+                            <p class="section">keypair</p>
+                            <pre>{{account.keypair | json : spacing}}</pre>
+                            <p class="section">balances <a ng-click="refreshBalances(account)">[refresh]</a></p>
+                            <div class="section" ng-repeat="balance in account.balances">
+                                <div class="balance" ng-switch on="balance.currency_type">
+                                    <div ng-switch-when="native">
+                                        <span>Currency: XLM</span><br/>
+                                        <span>Balance: {{balance.balance}}</span>
+                                    </div>
+                                    <div ng-switch-default>
+                                        <span>Currency: {{balance.currency_code}}</span><br/>
+                                        <span>Issuer: {{balance.currency_issuer}}</span><br/>
+                                        <span>Balance: {{balance.balance}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        <p class="section">offers <a ng-click="refreshOffers(account)">[refresh]</a></p>
+                        <div class="section" ng-repeat="offer in account.offers">
+                            <div class="balance" ng-switch on="offer.currency_type">
+                                  <span><u>Taker Pays</u></span><br/>
+                                  <span>Currency: {{offer.taker_pays.currency_type == 'native' ? 'XLM' : offer.taker_pays.currency_code}}</span><br/>
+                                  <span ng-if="offer.taker_pays.currency_type != 'native'">Issuer: {{offer.taker_pays.currency_issuer}}<br/></span>
+                                  <span><u>Taker Gets</u></span><br/>
+                                  <span>Currency: {{offer.taker_gets.currency_type == 'native' ? 'XLM' : offer.taker_gets.currency_code}}</span><br/>
+                                  <span ng-if="offer.taker_gets.currency_type != 'native'">Issuer: {{offer.taker_gets.currency_issuer}}<br/></span>
+                                  <span>Amount: {{offer.amount}}</span><br/>
+                                  <span>Price: {{offer.price_f}}</span><br/>
+                            </div>
+                        </div>
+                        <div class="section">actions</p>
+                            <button ng-click="viewAccount(account)">View Account</button>
+                            <button ng-click="setOptions(account)">Set Options</button>
+                            <button ng-click="sendSimplePayment(account)">Send Simple Payment</button>
+                            <button ng-click="sendPathPayment(account)">Send Path Payment</button>
+                            <button ng-click="addTrust(account)">Add Trustline</button>
+                            <button ng-click="authorizeTrust(account)">Authorize Trust</button>
+                            <button ng-click="createOffer(account)">Create Offer</button>
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </div>
 
     <!-- View Stellar Account Balance Widget -->
     <div class="row widget-row" id="viewaccount">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="ViewAccountInfoCtrl">
-        <div class="col-sm-12">
-          <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
-           <h3 class="title text-center">View Account Info</h3>
+        <div class="widget " ng-controller="ViewAccountInfoCtrl">
+            <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
+            <h3 class="title">View Account Info</h3>
+
+            <div ng-show="!collapsed">
+                <p class="text-center">View account info, sequences, and balances</p>
+                <form role="form" class="form-horizontal">
+                    <label class="control-label">Address:</label>
+                    <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
+                    <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary" ng-click="viewAccountInfo()">View Account Info</button>
+                </form>
+                <div ng-show="data.result || data.error">
+                    <pre>{{data.result || data.error}}</pre>
+                </div>
+            </div>
         </div>
-        <div ng-show="!collapsed">
-          <div class="col-sm-12">
-             <p class="text-center">View account info, sequences, and balances</p>
-          </div>
-          <form role="form" class="form-horizontal">
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Address:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="viewAccountInfo()">View Account Info</button>
-            </div>
-          </form>
-          <div class="row" ng-show="data.result || data.error">
-            <div class="col-xs-12">
-              <pre>{{data.result || data.error}}</pre>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- View Stellar Account Offers Widget -->
     <div class="row widget-row" id="viewoffers">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="ViewOffersCtrl">
-        <div class="col-sm-12">
-          <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
-           <h3 class="title text-center">View Account Offers</h3>
-        </div>
-        <div ng-show="!collapsed">
-          <div class="col-sm-12">
-             <p class="text-center">View account offers</p>
-          </div>
-          <form role="form" class="form-horizontal">
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Address:</label>
-              <div class="col-sm-10">
+        <div class="widget " ng-controller="ViewOffersCtrl">
+            <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
+            <h3 class="title">View Account Offers</h3>
+            <div ng-show="!collapsed">
+                <p class="text-center">View account offers</p>
+            <form role="form">
+                <label class="control-label">Address:</label>
                 <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
-              </div>
+                <button ng-click="viewOffers()">View Account Offers</button>
+            </form>
+            <div ng-show="data.result || data.error">
+                <pre>{{data.result || data.error}}</pre>
             </div>
-            <div class="form-group">
-              <button class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="viewOffers()">View Account Offers</button>
-            </div>
-          </form>
-          <div class="row" ng-show="data.result || data.error">
-            <div class="col-xs-12">
-              <pre>{{data.result || data.error}}</pre>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
 
     <!-- Stream Account Transactions -->
     <div class="row widget-row">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="StreamAccountTransactionsCtrl">
-        <div class="col-sm-12">
-          <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
-          <h3 class="title text-center">Stream Account Transactions</h3>
-        </div>
-        <div ng-show="!collapsed">
-          <div class="col-sm-12">
-             <p class="text-center">Demostrates how to use the streaming account transactions API</p>
-          </div>
-          <form role="form" class="form-horizontal">
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Address:</label>
-              <div class="col-sm-10">
+        <div class="widget " ng-controller="StreamAccountTransactionsCtrl">
+    
+            <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
+            <h3 class="title">Stream Account Transactions</h3>
+            <div ng-show="!collapsed">
+                <p class="text-center">Demostrates how to use the streaming account transactions API</p>
+            <form role="form" class="form-horizontal">
+                <label class="control-label">Address:</label>
                 <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
-              </div>
+                <button type="submit" ng-click="streamTransactions()">Stream Transactions</button>
+            </form>
+            <div ng-repeat="transaction in data.transactions track by $index">
+                <pre>
+                    {{transaction | json : spacing}}
+                </pre>
             </div>
-            <div class="form-group">
-              <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="streamTransactions()">Stream Transactions</button>
+            <div ng-show="data.error">
+                {{data.error}}
             </div>
-          </form>
-          <div ng-repeat="transaction in data.transactions track by $index">
-            <div class="row">
-              <pre class="col-xs-12">
-                {{transaction | json : spacing}}
-              </pre>
-            </div>
-          </div>
-          <div ng-show="data.error">
-            {{data.error}}
-          </div>
         </div>
-      </div>
     </div>
 
     <!-- Set Options Widget -->
     <div class="row widget-row" id="setoptions">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="SetOptionsCtrl">
-        <div class="col-sm-12">
-          <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
-          <h3 class="title text-center">Set Options</h3>
-        </div>
-        <div ng-show="!collapsed">
-          <div class="col-sm-12">
-            <p class="text-center">Set various account options</p>
-          </div>
-          <form role="form" class="form-horizontal">
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Address:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Secret:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Set Flags:</label>
-              <div class="col-sm-10">
-                <label>AUTH_REQUIRED_FLAG:
-                  <input class="form-control" type="checkbox" ng-model="data.setFlags.AUTH_REQUIRED_FLAG"  ng-true-value="1" ng-false-value="0"/>
-                </label><br/>
-                <label>AUTH_REVOCABLE_FLAG:
-                  <input class="form-control" type="checkbox" ng-model="data.setFlags.AUTH_REVOCABLE_FLAG" ng-true-value="2" ng-false-value="0"/>
-                </label>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Clear Flags:</label>
-              <div class="col-sm-10">
-                <label>AUTH_REQUIRED_FLAG:
-                  <input class="form-control" type="checkbox" ng-model="data.clearFlags.AUTH_REQUIRED_FLAG" ng-true-value="1" ng-false-value="0"/>
-                </label><br/>
-                <label>AUTH_REVOCABLE_FLAG:
-                  <input class="form-control" type="checkbox" ng-model="data.clearFlags.AUTH_REVOCABLE_FLAG" ng-true-value="2" ng-false-value="0"/>
-                </label>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Thresholds:</label>
-              <div class="col-sm-10">
-                <div class="row">
-                  <div class="col-sm-12">
+        <div class="widget " ng-controller="SetOptionsCtrl">
+            <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
+            <h3 class="title">Set Options</h3>
+            <div ng-show="!collapsed">
+                <p>Set various account options</p>
+                <form role="form" class="form-horizontal">
+                    <label class="control-label">Address:</label>
+                    <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
+                    <label class="control-label">Secret:</label>
+                    <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
+                    <label class="control-label">Set Flags:</label>
+                    <label>AUTH_REQUIRED_FLAG:</label>
+                    <input class="form-control" type="checkbox" ng-model="data.setFlags.AUTH_REQUIRED_FLAG"  ng-true-value="1" ng-false-value="0"/>
+                    
+                    <label>AUTH_REVOCABLE_FLAG:</label>
+                    <input class="form-control" type="checkbox" ng-model="data.setFlags.AUTH_REVOCABLE_FLAG" ng-true-value="2" ng-false-value="0"/>
+                    
+                    <label class="control-label">Clear Flags:</label>
+                    <label>AUTH_REQUIRED_FLAG:</label>
+                    <input class="form-control" type="checkbox" ng-model="data.clearFlags.AUTH_REQUIRED_FLAG" ng-true-value="1" ng-false-value="0"/>
+  
+                    <label>AUTH_REVOCABLE_FLAG:</label>
+                    <input class="form-control" type="checkbox" ng-model="data.clearFlags.AUTH_REVOCABLE_FLAG" ng-true-value="2" ng-false-value="0"/>
+  
+                    <label class="control-label">Thresholds:</label>
                     <label>Weight (master key weight, 0-255):</label>
                     <input class="form-control" type="number" ng-model="data.thresholds.weight"/>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-sm-12">
                     <label>Low (low threshold level, 0-255):</label>
                     <input class="form-control" type="number" ng-model="data.thresholds.low"/>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-sm-12">
                     <label>Medium (medium threshold level, 0-255):</label>
                     <input class="form-control" type="number" ng-model="data.thresholds.medium"/>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-sm-12">
                     <label>High (high threshold level, 0-255):</label>
                     <input class="form-control" type="number" ng-model="data.thresholds.high"/>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Add signer:</label>
-              <div class="col-sm-10">
-                <div class="row">
-                  <div class="col-sm-12">
+
+                    <label class="control-label">Add signer:</label>
                     <label>Signer Address:</label>
                     <input class="form-control" type="text" ng-model="data.signer.address"/>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-sm-12">
+
                     <label>Weight (0-255, 0 for delete)</label>
                     <input class="form-control" type="number" ng-model="data.signer.weight"/>
-                  </div>
+
+                    <label class="control-label">Federation Domain:</label>
+                    <input class="form-control" type="text" ng-model="data.homeDomain" placeholder="Where to look up stellar.txt"/>
+                    <button type="submit" ng-click="setOptions()">Submit Transaction</button>
+                </form>
+                <div ng-show="data.result || data.error">
+                    <pre>{{data.result || data.error}}</pre>
                 </div>
-              </div>
             </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Federation Domain:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.homeDomain" placeholder="Where to look up stellar.txt"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="setOptions()">Submit Transaction</button>
-            </div>
-          </form>
-          <div class="row" ng-show="data.result || data.error">
-            <div class="col-xs-12">
-              <pre>{{data.result || data.error}}</pre>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
 
 
     <!-- Send a Payment Widget -->
     <div class="row widget-row" id="payment">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="SendPaymentCtrl">
-        <div class="col-sm-12">
-          <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
-          <h3 class="title text-center">Send a Simple Payment</h3>
+        <div class="widget " ng-controller="SendPaymentCtrl">
+            <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
+            <h3 class="title">Send a Simple Payment</h3>
+            <div ng-show="!collapsed">
+                <p class="text-center">Sends the same currency/issuer from one account to another.</p>
+            <form role="form">
+                <label class="control-label">Address:</label>
+                <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
+    
+                <label class="control-label">Secret:</label>
+      
+                <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
+                <label class="control-label">Destination:</label>
+  
+                <input class="form-control" type="text" ng-model="data.destination" placeholder="Enter Destination address"/>
+
+                <label class="control-label">Currency:</label>
+  
+                <input class="form-control" type="text" ng-model="data.currency" placeholder="Enter currency code"/>
+
+                <label class="control-label">Issuer:</label>
+  
+                <input class="form-control" type="text" ng-model="data.issuer" placeholder="Enter issuer (blank for XLM)"/>
+
+                <label class="control-label">Amount:</label>
+  
+                <input class="form-control" type="text" ng-model="data.amount" placeholder="Enter amount"/>
+
+
+                <label class="control-label">Memo:</label>
+  
+                <input class="form-control" type="text" ng-model="data.memo" placeholder="Enter a text memo"/>
+
+                <button type="submit" ng-click="sendPayment()">Submit Transaction</button>
+            </form>
+            <div ng-show="data.result || data.error">
+                <pre>{{data.result || data.error}}</pre>
+            </div>
         </div>
-        <div ng-show="!collapsed">
-          <div class="col-sm-12">
-            <p class="text-center">Sends the same currency/issuer from one account to another.</p>
-          </div>
-          <form role="form" class="form-horizontal">
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Address:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Secret:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Destination:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.destination" placeholder="Enter Destination address"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Currency:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.currency" placeholder="Enter currency code"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Issuer:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.issuer" placeholder="Enter issuer (blank for XLM)"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Amount:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.amount" placeholder="Enter amount"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Memo:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.memo" placeholder="Enter a text memo"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="sendPayment()">Submit Transaction</button>
-          </div>
-          </form>
-          <div class="row" ng-show="data.result || data.error">
-            <div class="col-xs-12">
-              <pre>{{data.result || data.error}}</pre>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Send a Path Payment Widget -->
     <div class="row widget-row" id="pathpayment">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="SendPathPaymentCtrl">
-        <div class="col-sm-12">
-          <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
-          <h3 class="title text-center">Send a Path Payment</h3>
+        <div class="widget " ng-controller="SendPathPaymentCtrl">
+            <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
+            <h3 class="title">Send a Path Payment</h3>
+            <div ng-show="!collapsed">
+                <p>Sends a payment to another account using a different source currency than the currency the destination receives. If there's an offer on the network for the source currency / destination currency, the payment can be sent, otherwise it needs to go through  paths of more than 1 offer. This is why you need to specify a send max, the amount of source currency to send may fluctuate based on what offer is selected.</p>
+            <form role="form">
+        
+                <label class="control-label">Address:</label>
+          
+                <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
+    
+                <label class="control-label">Secret:</label>
+      
+                <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
+
+                <label class="control-label">Source Currency:</label>
+  
+                <input class="form-control" type="text" ng-model="data.sourcecurrency" placeholder="The currency code to pay with"/>
+
+                <label class="control-label">Issuer:</label>
+  
+                <input class="form-control" type="text" ng-model="data.sourceissuer" placeholder="The source currency issuer"/>
+
+                <label class="control-label">Send Max:</label>
+  
+                <input class="form-control" type="number" ng-model="data.sendmax" placeholder="The max amount of this currency to send"/>
+
+                <label class="control-label">Destination:</label>
+  
+                <input class="form-control" type="text" ng-model="data.destination" placeholder="Enter Destination address"/>
+
+                <label class="control-label">Currency:</label>
+  
+                <input class="form-control" type="text" ng-model="data.destcurrency" placeholder="Enter currency destination gets"/>
+
+                <label class="control-label">Issuer:</label>
+  
+                <input class="form-control" type="text" ng-model="data.destissuer" placeholder="The destination currency issuer"/>
+
+                <label class="control-label">Amount:</label>
+  
+                <input class="form-control" type="text" ng-model="data.amount" placeholder="Amount of destination currency to send"/>
+
+                <label class="control-label">Memo:</label>
+  
+                <input class="form-control" type="text" ng-model="data.memo" placeholder="Enter a text memo"/>
+
+                <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary" ng-click="sendPathPayment()">Submit Transaction</button>
+            </form>
+            <div ng-show="data.result || data.error">
+                <pre>{{data.result || data.error}}</pre>
+            </div>
         </div>
-        <div ng-show="!collapsed">
-          <div class="col-sm-12">
-            <p class="text-center">Sends a payment to another account using a different source currency than the currency the destination receives. If there's an offer on the network for the source currency / destination currency, the payment can be sent, otherwise it needs to go through  paths of more than 1 offer. This is why you need to specify a send max, the amount of source currency to send may fluctuate based on what offer is selected.</p>
-          </div>
-          <form role="form" class="form-horizontal">
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Address:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Secret:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Source Currency:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.sourcecurrency" placeholder="The currency code to pay with"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Issuer:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.sourceissuer" placeholder="The source currency issuer"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Send Max:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="number" ng-model="data.sendmax" placeholder="The max amount of this currency to send"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Destination:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.destination" placeholder="Enter Destination address"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Currency:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.destcurrency" placeholder="Enter currency destination gets"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Issuer:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.destissuer" placeholder="The destination currency issuer"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Amount:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.amount" placeholder="Amount of destination currency to send"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Memo:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.memo" placeholder="Enter a text memo"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="sendPathPayment()">Submit Transaction</button>
-          </div>
-          </form>
-          <div class="row" ng-show="data.result || data.error">
-            <div class="col-xs-12">
-              <pre>{{data.result || data.error}}</pre>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Create Trust Line Widget -->
     <div class="row widget-row" id="addtrust">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="CreateTrustLineCtrl">
-        <div class="col-sm-12">
-          <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
-          <h3 class="title text-center">Create a Trust Line</h3>
+        <div class="widget " ng-controller="CreateTrustLineCtrl">
+            <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
+            <h3 class="title">Create a Trust Line</h3>
+            <div ng-show="!collapsed">
+                <p>Create a trust line for a currency/issuer</p>
+                <form role="form" class="form-horizontal">
+        
+                    <label class="control-label">Address:</label>
+          
+                    <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
+        
+    
+                    <label class="control-label">Secret:</label>
+      
+                    <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
+   
+
+                    <label class="control-label">Issuer:</label>
+  
+                    <input class="form-control" type="text" ng-model="data.issuer" placeholder="Enter issuer"/>
+
+                    <label class="control-label">Currency:</label>
+  
+                    <input class="form-control" type="text" ng-model="data.currency" placeholder="Enter currency"/>
+
+                    <label class="control-label">Amount:</label>
+  
+                    <input class="form-control" type="text" ng-model="data.amount" placeholder="Enter amount"/>
+
+                    <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary" ng-click="createTrustLine()">Submit Transaction</button>
+                </form>
+                <div class="row" ng-show="data.result || data.error">
+                    <pre>{{data.result || data.error}}</pre>
+                </div>
+            </div>
         </div>
-        <div ng-show="!collapsed">
-          <div class="col-sm-12">
-            <p class="text-center">Create a trust line for a currency/issuer</p>
-          </div>
-          <form role="form" class="form-horizontal">
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Address:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Secret:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Issuer:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.issuer" placeholder="Enter issuer"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Currency:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.currency" placeholder="Enter currency"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Amount:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.amount" placeholder="Enter amount"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="createTrustLine()">Submit Transaction</button>
-          </div>
-          </form>
-          <div class="row" ng-show="data.result || data.error">
-            <div class="col-xs-12">
-              <pre class="col-xs-12">{{data.result || data.error}}</pre>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Authorize Trust Line Widget -->
     <div class="row widget-row" id="authorizetrust">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="AuthorizeTrustCtrl">
-        <div class="col-sm-12">
-          <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
-          <h3 class="title text-center">Authorize Trust Line</h3>
+        <div class="widget " ng-controller="AuthorizeTrustCtrl">
+            <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
+            <h3 class="title">Authorize Trust Line</h3>
+            <div ng-show="!collapsed">
+                <p>Allow an account to hold trust line to your account. This requires that your account have AUTH_REQUIRED_FLAG set, and the account you're authorizing has already set a trust line to your account for the currency you're authorizing.</p>
+                <form role="form" class="form-horizontal">
+          
+                    <label class="control-label">Address:</label>
+                    <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
+
+      
+                    <label class="control-label">Secret:</label>
+                    <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
+
+                    <label class="control-label">Authorized Account:</label>
+                    <input class="form-control" type="text" ng-model="data.trustor" placeholder="Enter issuer"/>
+
+                    <label class="control-label">Currency Code:</label>
+                    <input class="form-control" type="text" ng-model="data.currency" placeholder="Enter currency"/>
+
+                    <label class="control-label">Authorize:</label>
+        
+                    <label>Authorize</label>               
+                    <input type="radio" ng-model="data.authorize" value="true">
+            
+                    <label>Deauthorize </label>  
+                    <input type="radio" ng-model="data.authorize" value="false">
+
+                    <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary" ng-click="authorizeTrust()">Submit Transaction</button>
+                </form>
+            <div ng-show="data.result || data.error">
+                <pre>{{data.result || data.error}}</pre>
+            </div>
         </div>
-        <div ng-show="!collapsed">
-          <div class="col-sm-12">
-             <p>Allow an account to hold trust line to your account. This requires that your account have AUTH_REQUIRED_FLAG set, and the account you're authorizing has already set a trust line to your account for the currency you're authorizing.</p>
-          </div>
-          <form role="form" class="form-horizontal">
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Address:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Secret:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Authorized Account:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.trustor" placeholder="Enter issuer"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Currency Code:</label>
-            <div class="col-sm-10">
-              <input class="form-control" type="text" ng-model="data.currency" placeholder="Enter currency"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Authorize:</label>
-            <div class="col-sm-10">
-                <label>
-                  <input type="radio" ng-model="data.authorize" value="true">
-                  Authorize
-                </label><br/>
-                <label>
-                  <input type="radio" ng-model="data.authorize" value="false">
-                  Deauthorize
-                </label>
-            </div>
-          </div>
-          <div class="form-group">
-            <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="authorizeTrust()">Submit Transaction</button>
-          </div>
-          </form>
-          <div class="row" ng-show="data.result || data.error">
-            <div class="col-xs-12">
-              <pre class="col-xs-12">{{data.result || data.error}}</pre>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Create Offer Widget -->
     <div class="row widget-row" id="createoffer">
-      <div class="widget col-xs-6 col-xs-offset-3" ng-controller="CreateOfferCtrl">
-        <div class="col-sm-12">
-          <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
-          <h3 class="title text-center">Create Offer</h3>
+        <div class="widget " ng-controller="CreateOfferCtrl">
+            <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
+            <h3 class="title">Create Offer</h3>
+            <div ng-show="!collapsed">
+                <form role="form">
+        
+                    <label class="control-label">Address:</label>
+          
+                    <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
+        
+    
+                    <label class="control-label">Secret:</label>
+      
+                    <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
+   
+
+                    <label class="control-label">Buy:</label>
+  
+                    <input class="form-control" type="text" ng-model="data.buy.code" placeholder="The currency code you're buying"/>
+
+                    <label class="control-label">Issuer:</label>
+  
+                    <input ng-disabled="data.buy.code.toLowerCase() == 'xlm'" class="form-control" type="text" ng-model="data.buy.issuer" placeholder="The currency's issuer address"/>
+
+                    <label class="control-label">Sell:</label>
+  
+                    <input class="form-control" type="text" ng-model="data.sell.code" placeholder="The currency you have that you're selling"/>
+
+                    <label class="control-label">Issuer:</label>
+  
+                    <input ng-disabled="data.sell.code.toLowerCase() == 'xlm'" class="form-control" type="text" ng-model="data.sell.issuer" placeholder="The currency's issuer"/>
+
+
+                    <label class="control-label">Amount:</label>
+  
+                    <input class="form-control" type="text" ng-model="data.amount" placeholder="The amount of currency you're selling"/>
+
+                    <label class="control-label">Price:</label>
+  
+                    <input class="form-control" type="text" ng-model="data.price" placeholder="The price you're selling for (sell/buy)"/>
+
+                    <label class="control-label">OfferId:</label>
+  
+                    <input class="form-control" type="text" ng-model="data.offerid" placeholder="id for the offer (0 to delete the offer)"/>
+
+                    <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary" ng-click="createOffer()">Submit Transaction</button>
+                </form>
+                <div ng-show="data.result || data.error">
+                    <pre>{{data.result || data.error}}</pre>
+                </div>
+            </div>
         </div>
-        <div ng-show="!collapsed">
-          <form role="form" class="form-horizontal">
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Address:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.address" placeholder="Enter address"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Secret:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.secret" placeholder="Enter secret"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Buy:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.buy.code" placeholder="The currency code you're buying"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Issuer:</label>
-              <div class="col-sm-10">
-                <input ng-disabled="data.buy.code.toLowerCase() == 'xlm'" class="form-control" type="text" ng-model="data.buy.issuer" placeholder="The currency's issuer address"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Sell:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.sell.code" placeholder="The currency you have that you're selling"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Issuer:</label>
-              <div class="col-sm-10">
-                <input ng-disabled="data.sell.code.toLowerCase() == 'xlm'" class="form-control" type="text" ng-model="data.sell.issuer" placeholder="The currency's issuer"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Amount:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.amount" placeholder="The amount of currency you're selling"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Price:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.price" placeholder="The price you're selling for (sell/buy)"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">OfferId:</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" ng-model="data.offerid" placeholder="id for the offer (0 to delete the offer)"/>
-              </div>
-            </div>
-            <div class="form-group">
-              <button type="submit" class="col-xs-8 col-xs-offset-2 btn btn-md btn-primary text-center" ng-click="createOffer()">Submit Transaction</button>
-            </div>
-          </form>
-          <div class="row" ng-show="data.result || data.error">
-            <pre class="col-xs-12">
-              {{data.result || data.error}}
-            </pre>
-          </div>
-        </div>
-      </div>
     </div>
-  </body>
+</div> <!--end container -->
+</body>
 </html>
