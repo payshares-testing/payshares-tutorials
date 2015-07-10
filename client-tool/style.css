@@ -728,22 +728,40 @@ body {
     .container {
       max-width: 740px; } }
 
+button {
+  margin-top: 0.25em; }
+
 input[type="text"],
 input[type="number"] {
   width: 100%;
-  margin: 0.25em 0 0.5em; }
+  margin: 0.25em 0 1em; }
 
 label {
-  font-weight: bold; }
+  font-weight: bold;
+  margin-top: 0.5em; }
+  label.checkbox-label, label.radio-label {
+    font-weight: normal; }
 
 pre {
   background: #4e4e4e;
   color: #fff;
   border-radius: 3px;
-  font-size: 0.88em; }
+  font-size: 0.88em;
+  word-break: break-all;
+  word-wrap: break-word;
+  padding: 0.5em; }
+
+h3 {
+  margin-top: 1em; }
 
 .widget-row {
   margin: 25px 0 25px 0; }
+  .widget-row section {
+    margin: 1em 0;
+    padding-bottom: 1em;
+    border-bottom: 1px dotted #d2d2d2; }
+  .widget-row ul {
+    padding: 0 0 0 1em; }
 
 .widget {
   border: 1px #d2d2d2 solid;

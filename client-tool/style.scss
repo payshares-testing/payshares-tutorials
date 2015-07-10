@@ -6,6 +6,9 @@
 @import 'node_modules/solar-stellarorg/styles/index';
 //@import 'node_modules/solar-stellarorg-pages/styles/index';
 
+//variables
+$border-color: $s-color-neutral5;
+
 //basic structure
 .container {
 	margin: auto;
@@ -18,17 +21,22 @@
 //basic forms & buttons
 button {
 	@extend .s-button;
+    margin-top: 0.25em;
 }
 
 input[type="text"],
 input[type="number"],
 {
 	width: 100%;
-	margin: 0.25em 0 0.5em;
+	margin: 0.25em 0 1em;
 }
 
 label {
 	font-weight: bold;
+    margin-top: 0.5em;
+    &.checkbox-label, &.radio-label {
+        font-weight: normal;
+    }
 }
 
 pre {
@@ -36,17 +44,29 @@ pre {
     color: #fff;
     border-radius: 3px;
     font-size: 0.88em;
+    word-break: break-all;
+    word-wrap: break-word;
+    padding: 0.5em;
 }
 
+h3 {
+    margin-top: 1em;
+}
 
-
-
-// andrew's styles
+// widget generic styles
 .widget-row {
     margin: 25px 0 25px 0;
+    section {
+        margin: 1em 0;
+        padding-bottom: 1em;
+        border-bottom: 1px dotted $border-color;
+    }
+    ul {
+        padding: 0 0 0 1em;
+    }
 }
 .widget {
-    border: 1px $s-color-neutral5 solid;
+    border: 1px $border-color solid;
     border-radius: 3px;
     padding: 1em;
 }
