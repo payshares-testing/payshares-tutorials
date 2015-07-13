@@ -375,7 +375,8 @@ html {
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  padding: 0; }
+  padding: 0;
+  line-height: 1.25em; }
 
 a, a:active, a:hover, a:visited {
   color: inherit; }
@@ -723,10 +724,11 @@ body {
 
 .container {
   margin: auto;
-  padding: 0.5em; }
+  padding: 0; }
   @media screen and (min-width: 768px) {
     .container {
-      max-width: 740px; } }
+      max-width: 740px;
+      padding: 0.5em; } }
 
 button {
   margin-top: 0.25em; }
@@ -755,18 +757,25 @@ h3 {
   margin-top: 1em; }
 
 .widget-row {
-  margin: 25px 0 25px 0; }
+  margin: 15px 0; }
   .widget-row section {
     margin: 1em 0;
     padding-bottom: 1em;
     border-bottom: 1px dotted #d2d2d2; }
   .widget-row ul {
     padding: 0 0 0 1em; }
+  @media screen and (min-width: 768px) {
+    .widget-row {
+      margin: 25px 0 25px 0; } }
 
 .widget {
-  border: 1px #d2d2d2 solid;
-  border-radius: 3px;
-  padding: 1em; }
+  border-bottom: 1px #d2d2d2 solid;
+  padding: 0.5em 1em 1em; }
+  @media screen and (min-width: 768px) {
+    .widget {
+      border: 1px #d2d2d2 solid;
+      border-radius: 3px;
+      padding: 1em; } }
 
 .widget .shrink {
   cursor: pointer;

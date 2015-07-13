@@ -12,9 +12,10 @@ $border-color: $s-color-neutral5;
 //basic structure
 .container {
 	margin: auto;
-	padding: 0.5em;
+	padding: 0;
 	@media screen and (min-width: 768px) {
 		max-width: 740px;
+        padding: 0.5em;
 	}
 }
 
@@ -49,13 +50,16 @@ pre {
     padding: 0.5em;
 }
 
-h3 {
+h3 { 
     margin-top: 1em;
+    @media screen and (min-width: 768px) {
+
+    }
 }
 
 // widget generic styles
 .widget-row {
-    margin: 25px 0 25px 0;
+    margin: 15px 0;
     section {
         margin: 1em 0;
         padding-bottom: 1em;
@@ -64,11 +68,18 @@ h3 {
     ul {
         padding: 0 0 0 1em;
     }
+    @media screen and (min-width: 768px) {
+        margin: 25px 0 25px 0;  
+    }
 }
 .widget {
-    border: 1px $border-color solid;
-    border-radius: 3px;
-    padding: 1em;
+    border-bottom: 1px $border-color solid;
+    padding: 0.5em 1em 1em;
+    @media screen and (min-width: 768px) {
+        border: 1px $border-color solid;
+        border-radius: 3px;
+        padding: 1em;  
+    }
 }
 .widget .shrink {
     cursor: pointer;
