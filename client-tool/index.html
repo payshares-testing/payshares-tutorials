@@ -1,7 +1,7 @@
 <html>
 <head>
-  <script type="text/javascript" src="angular.min.js"></script>
-  <script type="text/javascript" src="./stellar-lib.js"></script>
+  <script type="text/javascript" src="./bower_components/angular/angular.min.js"></script>
+  <script type="text/javascript" src="./bower_components/js-stellar-lib/stellar-lib.min.js"></script>
   <script type="text/javascript" src="./main.js"></script>
   <link rel="stylesheet" type="text/css" href="./style.css">
 </head>
@@ -76,14 +76,14 @@
                             <section>
                                 <h5>balances <a href="javascript:void(0)" ng-click="refreshBalances(account)">[refresh]</a></p>
                                     <div ng-repeat="balance in account.balances">
-                                        <div ng-switch on="balance.currency_type">
+                                        <div ng-switch on="balance.asset_type">
                                             <div ng-switch-when="native">
-                                                <span>Currency: XLM</span><br/>
+                                                <span>Asset: XLM</span><br/>
                                                 <span>Balance: {{balance.balance}}</span>
                                             </div>
                                             <div ng-switch-default>
-                                                <span>Currency: {{balance.currency_code}}</span><br/>
-                                                <span>Issuer: {{balance.currency_issuer}}</span><br/>
+                                                <span>Asset: {{balance.asset_code}}</span><br/>
+                                                <span>Issuer: {{balance.asset_issuer}}</span><br/>
                                                 <span>Balance: {{balance.balance}}</span>
                                             </div>
                                         </div>
@@ -92,13 +92,13 @@
                             <section>
                                 <h5>offers <a href="javascript:void(0)" ng-click="refreshOffers(account)">[refresh]</a></h5>
                                 <div class="section" ng-repeat="offer in account.offers">
-                                    <div class="balance" ng-switch on="offer.currency_type">
+                                    <div class="balance" ng-switch on="offer.asset_type">
                                           <span><u>Taker Pays</u></span><br/>
-                                          <span>Currency: {{offer.taker_pays.currency_type == 'native' ? 'XLM' : offer.taker_pays.currency_code}}</span><br/>
-                                          <span ng-if="offer.taker_pays.currency_type != 'native'">Issuer: {{offer.taker_pays.currency_issuer}}<br/></span>
+                                          <span>Asset: {{offer.taker_pays.asset_type == 'native' ? 'XLM' : offer.taker_pays.asset_code}}</span><br/>
+                                          <span ng-if="offer.taker_pays.asset_type != 'native'">Issuer: {{offer.taker_pays.asset_issuer}}<br/></span>
                                           <span><u>Taker Gets</u></span><br/>
-                                          <span>Currency: {{offer.taker_gets.currency_type == 'native' ? 'XLM' : offer.taker_gets.currency_code}}</span><br/>
-                                          <span ng-if="offer.taker_gets.currency_type != 'native'">Issuer: {{offer.taker_gets.currency_issuer}}<br/></span>
+                                          <span>Asset: {{offer.taker_gets.asset_type == 'native' ? 'XLM' : offer.taker_gets.asset_code}}</span><br/>
+                                          <span ng-if="offer.taker_gets.asset_type != 'native'">Issuer: {{offer.taker_gets.asset_issuer}}<br/></span>
                                           <span>Amount: {{offer.amount}}</span><br/>
                                           <span>Price: {{offer.price_f}}</span><br/>
                                     </div>
@@ -247,7 +247,7 @@
             <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
             <h2>Send a Simple Payment</h2>
             <div ng-show="!collapsed">
-                <p>Sends the same currency/issuer from one account to another.</p>
+                <p>Sends the same asset/issuer from one account to another.</p>
             <form role="form">
                 <label>Address:</label>
                 <input type="text" ng-model="data.address" placeholder="Enter address"/>
@@ -259,9 +259,9 @@
   
                 <input type="text" ng-model="data.destination" placeholder="Enter Destination address"/>
 
-                <label>Currency:</label>
+                <label>Asset:</label>
   
-                <input type="text" ng-model="data.currency" placeholder="Enter currency code"/>
+                <input type="text" ng-model="data.asset" placeholder="Enter asset code"/>
 
                 <label>Issuer:</label>
   
@@ -290,7 +290,7 @@
             <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
             <h2>Send a Path Payment</h2>
             <div ng-show="!collapsed">
-                <p>Sends a payment to another account using a different source currency than the currency the destination receives. If there's an offer on the network for the source currency / destination currency, the payment can be sent, otherwise it needs to go through  paths of more than 1 offer. This is why you need to specify a send max, the amount of source currency to send may fluctuate based on what offer is selected.</p>
+                <p>Sends a payment to another account using a different source asset than the asset the destination receives. If there's an offer on the network for the source asset / destination asset, the payment can be sent, otherwise it needs to go through  paths of more than 1 offer. This is why you need to specify a send max, the amount of source asset to send may fluctuate based on what offer is selected.</p>
             <form role="form">
         
                 <label>Address:</label>
@@ -301,33 +301,33 @@
       
                 <input type="text" ng-model="data.secret" placeholder="Enter secret"/>
 
-                <label>Source Currency:</label>
+                <label>Source Asset:</label>
   
-                <input type="text" ng-model="data.sourcecurrency" placeholder="The currency code to pay with"/>
+                <input type="text" ng-model="data.sourceasset" placeholder="The asset code to pay with"/>
 
                 <label>Issuer:</label>
   
-                <input type="text" ng-model="data.sourceissuer" placeholder="The source currency issuer"/>
+                <input type="text" ng-model="data.sourceissuer" placeholder="The source asset issuer"/>
 
                 <label>Send Max:</label>
   
-                <input type="number" ng-model="data.sendmax" placeholder="The max amount of this currency to send"/>
+                <input type="number" ng-model="data.sendmax" placeholder="The max amount of this asset to send"/>
 
                 <label>Destination:</label>
   
                 <input type="text" ng-model="data.destination" placeholder="Enter Destination address"/>
 
-                <label>Currency:</label>
+                <label>Asset:</label>
   
-                <input type="text" ng-model="data.destcurrency" placeholder="Enter currency destination gets"/>
+                <input type="text" ng-model="data.destasset" placeholder="Enter asset destination gets"/>
 
                 <label>Issuer:</label>
   
-                <input type="text" ng-model="data.destissuer" placeholder="The destination currency issuer"/>
+                <input type="text" ng-model="data.destissuer" placeholder="The destination asset issuer"/>
 
                 <label>Amount:</label>
   
-                <input type="text" ng-model="data.amount" placeholder="Amount of destination currency to send"/>
+                <input type="text" ng-model="data.amount" placeholder="Amount of destination asset to send"/>
 
                 <label>Memo:</label>
   
@@ -347,7 +347,7 @@
             <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
             <h2>Create a Trust Line</h2>
             <div ng-show="!collapsed">
-                <p>Create a trust line for a currency/issuer</p>
+                <p>Create a trust line for a asset/issuer</p>
                 <form role="form" class="form-horizontal">
         
                     <label>Address:</label>
@@ -364,9 +364,9 @@
   
                     <input type="text" ng-model="data.issuer" placeholder="Enter issuer"/>
 
-                    <label>Currency:</label>
+                    <label>Asset:</label>
   
-                    <input type="text" ng-model="data.currency" placeholder="Enter currency"/>
+                    <input type="text" ng-model="data.asset" placeholder="Enter asset"/>
 
                     <label>Amount:</label>
   
@@ -387,7 +387,7 @@
             <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
             <h2>Authorize Trust Line</h2>
             <div ng-show="!collapsed">
-                <p>Allow an account to hold trust line to your account. This requires that your account have AUTH_REQUIRED_FLAG set, and the account you're authorizing has already set a trust line to your account for the currency you're authorizing.</p>
+                <p>Allow an account to hold trust line to your account. This requires that your account have AUTH_REQUIRED_FLAG set, and the account you're authorizing has already set a trust line to your account for the asset you're authorizing.</p>
                 <form role="form" class="form-horizontal">
           
                     <label>Address:</label>
@@ -400,8 +400,8 @@
                     <label>Authorized Account:</label>
                     <input type="text" ng-model="data.trustor" placeholder="Enter issuer"/>
 
-                    <label>Currency Code:</label>
-                    <input type="text" ng-model="data.currency" placeholder="Enter currency"/>
+                    <label>Asset Code:</label>
+                    <input type="text" ng-model="data.asset" placeholder="Enter asset"/>
 
                     <h3>Authorize:</h3>
         
@@ -441,24 +441,24 @@
 
                     <label>Buy:</label>
   
-                    <input type="text" ng-model="data.buy.code" placeholder="The currency code you're buying"/>
+                    <input type="text" ng-model="data.buy.code" placeholder="The asset code you're buying"/>
 
                     <label>Issuer:</label>
   
-                    <input ng-disabled="data.buy.code.toLowerCase() == 'xlm'" type="text" ng-model="data.buy.issuer" placeholder="The currency's issuer address"/>
+                    <input ng-disabled="data.buy.code.toLowerCase() == 'xlm'" type="text" ng-model="data.buy.issuer" placeholder="The asset's issuer address"/>
 
                     <label>Sell:</label>
   
-                    <input type="text" ng-model="data.sell.code" placeholder="The currency you have that you're selling"/>
+                    <input type="text" ng-model="data.sell.code" placeholder="The asset you have that you're selling"/>
 
                     <label>Issuer:</label>
   
-                    <input ng-disabled="data.sell.code.toLowerCase() == 'xlm'" type="text" ng-model="data.sell.issuer" placeholder="The currency's issuer"/>
+                    <input ng-disabled="data.sell.code.toLowerCase() == 'xlm'" type="text" ng-model="data.sell.issuer" placeholder="The asset's issuer"/>
 
 
                     <label>Amount:</label>
   
-                    <input type="text" ng-model="data.amount" placeholder="The amount of currency you're selling"/>
+                    <input type="text" ng-model="data.amount" placeholder="The amount of asset you're selling"/>
 
                     <label>Price:</label>
   

@@ -369,7 +369,7 @@ function SendPaymentCtrl($scope, Server) {
                 // add a "payment" operation to the transaction
                 .addOperation(StellarLib.Operation.payment({
                     destination: $scope.data.destination,
-                    currency: new StellarLib.Currency(data.currency, data.issuer),
+                    asset: new StellarLib.Asset(data.asset, data.issuer),
                     amount: $scope.data.amount
                 }))
                 // sign the transaction with the account's secret key
@@ -418,10 +418,10 @@ function SendPathPaymentCtrl($scope, Server) {
                 })
                 // add a "payment" operation to the transaction
                 .addOperation(StellarLib.Operation.pathPayment({
-                    sendCurrency: new StellarLib.Currency(data.sourcecurrency, data.sourceissuer),
+                    sendAsset: new StellarLib.Asset(data.sourceasset, data.sourceissuer),
                     sendMax: data.sendmax,
                     destination: data.destination,
-                    destCurrency: new StellarLib.Currency(data.destcurrency, data.destissuer),
+                    destAsset: new StellarLib.Asset(data.destasset, data.destissuer),
                     destAmount: data.amount
                 }))
                 // sign the transaction with the account's secret key
@@ -502,7 +502,7 @@ function CreateTrustLineCtrl($scope, Server) {
             return new StellarLib.TransactionBuilder(account)
                 // add a "changeTrust" operation to the transaction
                 .addOperation(StellarLib.Operation.changeTrust({
-                    currency: new StellarLib.Currency($scope.data.currency, $scope.data.issuer)
+                    asset: new StellarLib.Asset($scope.data.asset, $scope.data.issuer)
                 }))
                 // sign the transaction with the account's secret
                 .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
@@ -547,7 +547,7 @@ function AuthorizeTrustCtrl($scope, Server) {
                 // add a "changeTrust" operation to the transaction
                 .addOperation(StellarLib.Operation.allowTrust({
                     trustor: $scope.data.trustor,
-                    currencyCode: $scope.data.currency,
+                    assetCode: $scope.data.asset,
                     authorize: $scope.data.authorize
                 }))
                 // sign the transaction with the account's secret
@@ -594,10 +594,10 @@ function CreateOfferCtrl($scope, Server) {
             var transaction = new StellarLib.TransactionBuilder(account)
                 // add a "manageOffer" operation to the transaction
                 .addOperation(StellarLib.Operation.manageOffer({
-                    // the currency we're selling
-                    takerGets: new StellarLib.Currency($scope.data.sell.code, $scope.data.sell.issuer),
-                    // the currency we're buying
-                    takerPays: new StellarLib.Currency($scope.data.buy.code, $scope.data.buy.issuer),
+                    // the asset we're selling
+                    takerGets: new StellarLib.Asset($scope.data.sell.code, $scope.data.sell.issuer),
+                    // the asset we're buying
+                    takerPays: new StellarLib.Asset($scope.data.buy.code, $scope.data.buy.issuer),
                     // the amount we're selling
                     amount: $scope.data.amount,
                     // the exchange rate we're charging

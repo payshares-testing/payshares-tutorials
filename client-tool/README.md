@@ -4,6 +4,7 @@ Tutorial demonstrating how to build a simple client. Makes use of js-stellar-lib
 *Note:* [nodejs](https://nodejs.org/download/) required.
 ```javascript
 npm install
+bower install
 gulp watch
 ```
 Note: stellar-lib.js is copied from https://github.com/stellar/js-stellar-lib/blob/master/dist/stellar-lib.js
