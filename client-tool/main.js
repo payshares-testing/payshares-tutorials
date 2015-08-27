@@ -58,8 +58,8 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
     $scope.accounts.unshift({
         name: "root",
         keypair: {
-            address: "gspbxqXqEUZkiCCEFFCN9Vu4FLucdjLLdLcsV6E82Qc1T7ehsTC",
-            secret: "sft74k3MagHG6iF36yeSytQzCCLsJ2Fo9K4YJpQCECwgoUobc4v"
+            address: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ",
+            secret: "SBQWY3DNPFWGSZTFNV4WQZLBOJ2GQYLTMJSWK3TTMVQXEY3INFXGO52X"
         }
     });
 
@@ -76,7 +76,7 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
     function saveAccounts() {
         var accounts;
         // dont save the root account
-        if ($scope.accounts[0] && $scope.accounts[0].keypair.secret == "sft74k3MagHG6iF36yeSytQzCCLsJ2Fo9K4YJpQCECwgoUobc4v") {
+        if ($scope.accounts[0] && $scope.accounts[0].keypair.secret == "SBQWY3DNPFWGSZTFNV4WQZLBOJ2GQYLTMJSWK3TTMVQXEY3INFXGO52X") {
             accounts = $scope.accounts.slice(1);
         } else {
             accounts = $scope.accounts;
@@ -595,9 +595,9 @@ function CreateOfferCtrl($scope, Server) {
                 // add a "manageOffer" operation to the transaction
                 .addOperation(StellarLib.Operation.manageOffer({
                     // the asset we're selling
-                    takerGets: new StellarLib.Asset($scope.data.sell.code, $scope.data.sell.issuer),
+                    selling: new StellarLib.Asset($scope.data.sell.code, $scope.data.sell.issuer),
                     // the asset we're buying
-                    takerPays: new StellarLib.Asset($scope.data.buy.code, $scope.data.buy.issuer),
+                    buying: new StellarLib.Asset($scope.data.buy.code, $scope.data.buy.issuer),
                     // the amount we're selling
                     amount: $scope.data.amount,
                     // the exchange rate we're charging
