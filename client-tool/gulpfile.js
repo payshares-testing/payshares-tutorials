@@ -2,6 +2,8 @@ var gulp          = require('gulp');
 
 var $ = require('gulp-load-plugins')();
 
+gulp.task('default', ['watch']);
+
 gulp.task('connect', function () {
     var connect = require('connect');
     var serveStatic = require('serve-static');

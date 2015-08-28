@@ -13,7 +13,7 @@ function CreateStellarAddressCtrl($scope, $rootScope, Server, $location, $anchor
     $scope.generate = function () {
         $scope.data = {};
         // PASTE CODE HERE
-        var keypair = StellarLib.Keypair.random();
+        var keypair = StellarSdk.Keypair.random();
         $scope.data.keypair = {
             address: keypair.address(),
             secret: keypair.seed()
@@ -219,7 +219,7 @@ function ViewAccountInfoCtrl($scope, Server) {
                     $scope.data.result = angular.toJson(account, true);
                 });
             })
-            .catch(StellarLib.NotFoundError, function (err) {
+            .catch(StellarSdk.NotFoundError, function (err) {
                 $scope.$apply(function () {
                     $scope.data.result = "Account not found.";
                 });
@@ -254,7 +254,7 @@ function ViewOffersCtrl($scope, Server) {
                     $scope.data.result = angular.toJson(offers, true);
                 });
             })
-            .catch(StellarLib.NotFoundError, function (err) {
+            .catch(StellarSdk.NotFoundError, function (err) {
                 $scope.$apply(function () {
                     $scope.data.result = "Account not found.";
                 });
@@ -318,10 +318,10 @@ function SetOptionsCtrl($scope, Server) {
                 if ($scope.data.homeDomain) {
                     options.homeDomain = $scope.data.homeDomain;
                 }
-                var transaction = new StellarLib.TransactionBuilder(account)
-                    .addOperation(StellarLib.Operation.setOptions(options))
+                var transaction = new StellarSdk.TransactionBuilder(account)
+                    .addOperation(StellarSdk.Operation.setOptions(options))
                     // sign the transaction with the account's secret key
-                    .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
+                    .addSigner(StellarSdk.Keypair.fromSeed($scope.data.secret))
                     .build();
                 console.log(transaction);
                 return Server.submitTransaction(transaction);
@@ -358,22 +358,22 @@ function SendPaymentCtrl($scope, Server) {
     }
 
     function sendPayment(data) {
-        // first load the account from the server (stellarlib uses the account's latest sequence #)
+        // first load the account from the server (StellarSdk uses the account's latest sequence #)
         Server.loadAccount(data.address)
         .then(function (account) {
-            // create a new transaction using StellarLib's TransactionBuilder
-            var transaction = new StellarLib.TransactionBuilder(account, {
+            // create a new transaction using StellarSdk's TransactionBuilder
+            var transaction = new StellarSdk.TransactionBuilder(account, {
                     // add a memo to the transaction if they gave one
-                    memo: data.memo ? StellarLib.Memo.text(data.memo) : ""
+                    memo: data.memo ? StellarSdk.Memo.text(data.memo) : ""
                 })
                 // add a "payment" operation to the transaction
-                .addOperation(StellarLib.Operation.payment({
+                .addOperation(StellarSdk.Operation.payment({
                     destination: $scope.data.destination,
-                    asset: new StellarLib.Asset(data.asset, data.issuer),
+                    asset: new StellarSdk.Asset(data.asset, data.issuer),
                     amount: $scope.data.amount
                 }))
                 // sign the transaction with the account's secret key
-                .addSigner(StellarLib.Keypair.fromSeed(data.secret))
+                .addSigner(StellarSdk.Keypair.fromSeed(data.secret))
                 .build();
             return Server.submitTransaction(transaction);
         })
@@ -408,24 +408,24 @@ function SendPathPaymentCtrl($scope, Server) {
     }
 
     function sendPathPayment(data) {
-        // first load the account from the server (stellarlib uses the account's latest sequence #)
+        // first load the account from the server (StellarSdk uses the account's latest sequence #)
         Server.loadAccount(data.address)
         .then(function (account) {
-            // create a new transaction using StellarLib's TransactionBuilder
-            var transaction = new StellarLib.TransactionBuilder(account, {
+            // create a new transaction using StellarSdk's TransactionBuilder
+            var transaction = new StellarSdk.TransactionBuilder(account, {
                     // add a memo to the transaction if they gave one
-                    memo: data.memo ? StellarLib.Memo.text(data.memo) : ""
+                    memo: data.memo ? StellarSdk.Memo.text(data.memo) : ""
                 })
                 // add a "payment" operation to the transaction
-                .addOperation(StellarLib.Operation.pathPayment({
-                    sendAsset: new StellarLib.Asset(data.sourceasset, data.sourceissuer),
+                .addOperation(StellarSdk.Operation.pathPayment({
+                    sendAsset: new StellarSdk.Asset(data.sourceasset, data.sourceissuer),
                     sendMax: data.sendmax,
                     destination: data.destination,
-                    destAsset: new StellarLib.Asset(data.destasset, data.destissuer),
+                    destAsset: new StellarSdk.Asset(data.destasset, data.destissuer),
                     destAmount: data.amount
                 }))
                 // sign the transaction with the account's secret key
-                .addSigner(StellarLib.Keypair.fromSeed(data.secret))
+                .addSigner(StellarSdk.Keypair.fromSeed(data.secret))
                 .build();
             return Server.submitTransaction(transaction);
         })
@@ -499,13 +499,13 @@ function CreateTrustLineCtrl($scope, Server) {
         Server.loadAccount($scope.data.address)
         .then(function (account) {
             // transactionbuilder uses the account's latest sequence #
-            return new StellarLib.TransactionBuilder(account)
+            return new StellarSdk.TransactionBuilder(account)
                 // add a "changeTrust" operation to the transaction
-                .addOperation(StellarLib.Operation.changeTrust({
-                    asset: new StellarLib.Asset($scope.data.asset, $scope.data.issuer)
+                .addOperation(StellarSdk.Operation.changeTrust({
+                    asset: new StellarSdk.Asset($scope.data.asset, $scope.data.issuer)
                 }))
                 // sign the transaction with the account's secret
-                .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
+                .addSigner(StellarSdk.Keypair.fromSeed($scope.data.secret))
                 .build();
         })
         .then(function (transaction) {
@@ -543,15 +543,15 @@ function AuthorizeTrustCtrl($scope, Server) {
         .then(function (account) {
             console.log($scope.data.authorize);
             // transactionbuilder uses the account's latest sequence #
-            var transaction = new StellarLib.TransactionBuilder(account)
+            var transaction = new StellarSdk.TransactionBuilder(account)
                 // add a "changeTrust" operation to the transaction
-                .addOperation(StellarLib.Operation.allowTrust({
+                .addOperation(StellarSdk.Operation.allowTrust({
                     trustor: $scope.data.trustor,
                     assetCode: $scope.data.asset,
                     authorize: $scope.data.authorize
                 }))
                 // sign the transaction with the account's secret
-                .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
+                .addSigner(StellarSdk.Keypair.fromSeed($scope.data.secret))
                 .build();
             console.log(transaction);
             return transaction;
@@ -591,13 +591,13 @@ function CreateOfferCtrl($scope, Server) {
         // load the latest sequence number for the account
         Server.loadAccount($scope.data.address)
         .then(function (account) {
-            var transaction = new StellarLib.TransactionBuilder(account)
+            var transaction = new StellarSdk.TransactionBuilder(account)
                 // add a "manageOffer" operation to the transaction
-                .addOperation(StellarLib.Operation.manageOffer({
+                .addOperation(StellarSdk.Operation.manageOffer({
                     // the asset we're selling
-                    selling: new StellarLib.Asset($scope.data.sell.code, $scope.data.sell.issuer),
+                    selling: new StellarSdk.Asset($scope.data.sell.code, $scope.data.sell.issuer),
                     // the asset we're buying
-                    buying: new StellarLib.Asset($scope.data.buy.code, $scope.data.buy.issuer),
+                    buying: new StellarSdk.Asset($scope.data.buy.code, $scope.data.buy.issuer),
                     // the amount we're selling
                     amount: $scope.data.amount,
                     // the exchange rate we're charging
@@ -606,7 +606,7 @@ function CreateOfferCtrl($scope, Server) {
                     offerId: $scope.data.offerId
                 }))
                 // sign the transaction with the account's secret key
-                .addSigner(StellarLib.Keypair.fromSeed($scope.data.secret))
+                .addSigner(StellarSdk.Keypair.fromSeed($scope.data.secret))
                 .build();
             return Server.submitTransaction(transaction);
         })
@@ -632,7 +632,7 @@ myApp.value("HORIZON_PORT", 443)
 // myApp.value("HORIZON_PORT", 8000)
 // Helper service that holds the server connection
 function Server(HORIZON_HOST, HORIZON_PORT) {
-    return new StellarLib.Server({
+    return new StellarSdk.Server({
         hostname:HORIZON_HOST,
         port:HORIZON_PORT,
         secure: true // true for the testnet
