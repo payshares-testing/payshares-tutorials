@@ -1,5 +1,5 @@
 /**
-* This demo hosted at https://github.com/stellar/stellar-tutorials/tree/master/client
+* This demo hosted at https://stellar.org/developers/tools/client
 */
 var myApp = angular.module('myApp', []);
 
