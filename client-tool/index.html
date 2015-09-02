@@ -166,7 +166,7 @@
             <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
             <h2>Stream Account Transactions</h2>
             <div ng-show="!collapsed">
-                <p>Demostrates how to use the streaming account transactions API</p>
+                <p>Demonstrates how to use the streaming account transactions API</p>
             <form role="form" class="form-horizontal">
                 <label>Address:</label>
                 <input type="text" ng-model="data.address" placeholder="Enter address"/>
@@ -290,7 +290,7 @@
             <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
             <h2>Send a Path Payment</h2>
             <div ng-show="!collapsed">
-                <p>Sends a payment to another account using a different source asset than the asset the destination receives. If there's an offer on the network for the source asset / destination asset, the payment can be sent, otherwise it needs to go through  paths of more than 1 offer. This is why you need to specify a send max, the amount of source asset to send may fluctuate based on what offer is selected.</p>
+                <p>Sends a payment to another account using a different source asset than the asset the destination receives. If there's an offer on the network for the source asset / destination asset, the payment can be sent, otherwise it needs to go through paths of more than 1 offer. This is why you need to specify a send max, the amount of source asset to send may fluctuate based on what offer is selected.</p>
             <form role="form">
         
                 <label>Address:</label>
@@ -387,7 +387,7 @@
             <a class="shrink" ng-click="collapsed = !collapsed">{{!collapsed ? '[ - ]' : '[ + ]'}}</a>
             <h2>Authorize Trust Line</h2>
             <div ng-show="!collapsed">
-                <p>Allow an account to hold trust line to your account. This requires that your account have AUTH_REQUIRED_FLAG set, and the account you're authorizing has already set a trust line to your account for the asset you're authorizing.</p>
+                <p>Allow an account to hold trustline to your account. This requires that your account have AUTH_REQUIRED_FLAG set, and the account you're authorizing has already set a trustline to your account for the asset you're authorizing.</p>
                 <form role="form" class="form-horizontal">
           
                     <label>Address:</label>
