@@ -1,5 +1,5 @@
 ## Stellar Client Tutorial
-Tutorial demonstrating how to build a simple client. Makes use of js-stellar-lib and connects to the Stellar testnet.
+Tutorial demonstrating the various [operations](https://github.com/stellar/docs/concepts/operations.md) that are available in Stellar. Makes use of js-stellar-sdk and connects to the Stellar testnet.
 ## Setup
 *Note:* [nodejs](https://nodejs.org/download/) required.
 ```javascript
@@ -7,4 +7,4 @@ npm install
 bower install
 gulp watch
 ```
-Note: stellar-lib.js is copied from https://github.com/stellar/js-stellar-lib/blob/master/dist/stellar-lib.js
+Note: stellar-sdk.js is copied from https://github.com/stellar/js-stellar-sdk/blob/master/dist/stellar-sdk.js
