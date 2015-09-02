@@ -7,4 +7,4 @@ npm install
 bower install
 gulp watch
 ```
-Note: stellar-sdk.js is copied from https://github.com/stellar/js-stellar-sdk/blob/master/dist/stellar-sdk.js
+Note: stellar-sdk.js is copied from https://github.com/stellar/bower-js-stellar-sdk/blob/master/stellar-sdk.js
