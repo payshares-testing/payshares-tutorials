@@ -53,10 +53,12 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
     * Add the root account as the default stored account.
     */
     $scope.accounts = [];
+    $scope.collapsed = true;
     // store previously stored accounts
     restoreAccounts();
     $scope.accounts.unshift({
         name: "root",
+        collapsed: true,
         keypair: {
             address: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ",
             secret: "SBQWY3DNPFWGSZTFNV4WQZLBOJ2GQYLTMJSWK3TTMVQXEY3INFXGO52X"
@@ -201,6 +203,7 @@ myApp.controller("AccountManagerCtrl", AccountManagerCtrl);
 // Level 2 - View Stellar Account Info
 function ViewAccountInfoCtrl($scope, Server) {
     $scope.data = {};
+    $scope.collapsed = true;
 
     /**
     * Received a broadcast to automatically fill in the keypair into the form.
@@ -242,6 +245,7 @@ function ViewOffersCtrl($scope, Server) {
         $scope.data.secret = keypair.secret;
     });
 
+    $scope.collapsed = true;
     $scope.data = {};
 
     /**
@@ -276,6 +280,8 @@ function SetOptionsCtrl($scope, Server) {
         $scope.data.address = keypair.address;
         $scope.data.secret = keypair.secret;
     });
+
+    $scope.collapsed = true;
 
     $scope.data = {
         // setting flags is an int, a bitwise & of all the flags for the account
@@ -343,6 +349,7 @@ myApp.controller("SetOptionsCtrl", SetOptionsCtrl);
 
 // Level 3 - Send a Payment
 function SendPaymentCtrl($scope, Server) {
+    $scope.collapsed = true;
     $scope.data = {};
 
     /**
@@ -393,6 +400,7 @@ myApp.controller("SendPaymentCtrl", SendPaymentCtrl);
 
 // Level 3.5 Send a path payment
 function SendPathPaymentCtrl($scope, Server) {
+    $scope.collapsed = true;
     $scope.data = {};
 
     /**
@@ -444,6 +452,7 @@ function SendPathPaymentCtrl($scope, Server) {
 myApp.controller("SendPathPaymentCtrl", SendPathPaymentCtrl);
 
 function StreamAccountTransactionsCtrl($scope, Server) {
+    $scope.collapsed = true;
     $scope.data = {};
     var es = null;
 
@@ -484,6 +493,7 @@ myApp.controller("StreamAccountTransactionsCtrl", StreamAccountTransactionsCtrl)
 
 // Level 4 - Create a Trust Line
 function CreateTrustLineCtrl($scope, Server) {
+    $scope.collapsed = true;
     $scope.data = {};
 
     /**
@@ -527,6 +537,7 @@ myApp.controller("CreateTrustLineCtrl", CreateTrustLineCtrl);
 
 // Level 5 - Authorize Trust Line
 function AuthorizeTrustCtrl($scope, Server) {
+    $scope.collapsed = true;
     $scope.data = {};
 
     /**
@@ -574,6 +585,7 @@ function AuthorizeTrustCtrl($scope, Server) {
 myApp.controller("AuthorizeTrustCtrl", AuthorizeTrustCtrl);
 
 function CreateOfferCtrl($scope, Server) {
+    $scope.collapsed = true;
     $scope.data = {
         buy: {},
         sell: {}
