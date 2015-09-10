@@ -3,6 +3,8 @@
 */
 var myApp = angular.module('myApp', []);
 
+StellarSdk.Network.useTestNet();
+
 // Level 1 - Create a new Stellar Address and create an account on the testnet
 function CreateStellarAddressCtrl($scope, $rootScope, Server, $location, $anchorScroll) {
 
