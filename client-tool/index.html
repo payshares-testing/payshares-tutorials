@@ -86,7 +86,7 @@
                                             </div>
                                             <div ng-switch-default>
                                                 <span>Asset: {{balance.asset_code}}</span><br/>
-                                                <span>Issuer: {{balance.asset_issuer}}</span><br/>
+                                                <span>Issuer: {{balance.issuer}}</span><br/>
                                                 <span>Balance: {{balance.balance}}</span>
                                             </div>
                                         </div>
@@ -97,13 +97,13 @@
                                 <div class="section" ng-repeat="offer in account.offers">
                                     <div class="balance" ng-switch on="offer.asset_type">
                                           <span><u>Taker Pays</u></span><br/>
-                                          <span>Asset: {{offer.taker_pays.asset_type == 'native' ? 'XLM' : offer.taker_pays.asset_code}}</span><br/>
-                                          <span ng-if="offer.taker_pays.asset_type != 'native'">Issuer: {{offer.taker_pays.asset_issuer}}<br/></span>
+                                          <span>Asset: {{offer.selling.asset_type == 'native' ? 'XLM' : offer.selling.asset_code}}</span><br/>
+                                          <span ng-if="offer.selling.asset_type != 'native'">Issuer: {{offer.selling.issuer}}<br/></span>
                                           <span><u>Taker Gets</u></span><br/>
-                                          <span>Asset: {{offer.taker_gets.asset_type == 'native' ? 'XLM' : offer.taker_gets.asset_code}}</span><br/>
-                                          <span ng-if="offer.taker_gets.asset_type != 'native'">Issuer: {{offer.taker_gets.asset_issuer}}<br/></span>
+                                          <span>Asset: {{offer.buying.asset_type == 'native' ? 'XLM' : offer.buying.asset_code}}</span><br/>
+                                          <span ng-if="offer.buying.asset_type != 'native'">Issuer: {{offer.buying.issuer}}<br/></span>
                                           <span>Amount: {{offer.amount}}</span><br/>
-                                          <span>Price: {{offer.price_f}}</span><br/>
+                                          <span>Price: {{offer.price}}</span><br/>
                                     </div>
                                 </div>
                             </section>
