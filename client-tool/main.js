@@ -1,7 +1,9 @@
 /**
 * This demo hosted at https://stellar.org/developers/tools/client
 */
-var myApp = angular.module('myApp', []);
+var myApp = angular.module('myApp', []).config(function($anchorScrollProvider) {
+    $anchorScrollProvider.disableAutoScrolling();
+});
 
 StellarSdk.Network.useTestNet();
 
@@ -24,6 +26,7 @@ function CreateStellarAddressCtrl($scope, $rootScope, Server, $location, $anchor
 
     $scope.createAccount = function () {
         Server.friendbot($scope.data.keypair.address)
+            .call()
             .then(function () {
                 $scope.$apply(function () {
                     $scope.data.result = "Created!";
@@ -101,6 +104,7 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
     * Got a request to store the account.
     */
     $scope.$on("storeaccount", function (event, name, address, secret) {
+        $scope.collapsed = false;
         storeAccount(name, address, secret);
     });
 
@@ -120,7 +124,9 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
     * Lookup the account by address and show the account's balances.
     */
     $scope.refreshBalances = function (account) {
-        Server.accounts(account.keypair.address)
+        Server.accounts()
+            .address(account.keypair.address)
+            .call()
             .then(function (result) {
                 $scope.$apply(function () {
                     account.balances = result.balances;
@@ -132,8 +138,9 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
     * Lookup the account by address and show the account's offers.
     */
     $scope.refreshOffers = function (account) {
-        Server.accounts(account.keypair.address, "offers")
-            .then(function (result) {
+        Server.offers('accounts', account.keypair.address)
+              .call()
+              .then(function (result) {
                 $scope.$apply(function () {
                     account.offers = result.records;
                 });
@@ -211,6 +218,7 @@ function ViewAccountInfoCtrl($scope, Server) {
     * Received a broadcast to automatically fill in the keypair into the form.
     */
     $scope.$on("viewaccount", function (event, keypair) {
+        $scope.collapsed = false;
         $scope.data.address = keypair.address;
     });
 
@@ -218,7 +226,9 @@ function ViewAccountInfoCtrl($scope, Server) {
     * Lookup the account by address and show the data.
     */
     $scope.viewAccountInfo = function () {
-        Server.accounts($scope.data.address)
+        Server.accounts()
+            .address($scope.data.address)
+            .call()
             .then(function (account) {
                 $scope.$apply(function () {
                     $scope.data.result = angular.toJson(account, true);
@@ -243,6 +253,7 @@ function ViewOffersCtrl($scope, Server) {
     * Received a broadcast to automatically fill in the keypair into the form.
     */
     $scope.$on("viewoffers", function (event, keypair) {
+        $scope.collapsed = false;
         $scope.data.address = keypair.address;
         $scope.data.secret = keypair.secret;
     });
@@ -254,7 +265,8 @@ function ViewOffersCtrl($scope, Server) {
     * Lookup the offers by address and show the data.
     */
     $scope.viewOffers = function () {
-        Server.accounts($scope.data.address, "offers")
+        Server.offers('accounts', $scope.data.address)
+            .call()
             .then(function (offers) {
                 $scope.$apply(function () {
                     $scope.data.result = angular.toJson(offers, true);
@@ -279,6 +291,7 @@ function SetOptionsCtrl($scope, Server) {
     * Received a broadcast to automatically fill in the keypair into the form.
     */
     $scope.$on("setoptions", function (event, keypair) {
+        $scope.collapsed = false;
         $scope.data.address = keypair.address;
         $scope.data.secret = keypair.secret;
     });
@@ -307,7 +320,9 @@ function SetOptionsCtrl($scope, Server) {
     };
 
     $scope.setOptions = function () {
-        Server.accounts($scope.data.address)
+        Server.accounts()
+            .address($scope.data.address)
+            .call()
             .then(function (account) {
                 // we'll only set the options the user has given
                 var options = {};
@@ -358,6 +373,7 @@ function SendPaymentCtrl($scope, Server) {
     * Received a broadcast to automatically fill in the keypair into the form.
     */
     $scope.$on("sendpayment", function (event, keypair) {
+        $scope.collapsed = false;
         $scope.data.address = keypair.address;
         $scope.data.secret = keypair.secret;
     });
@@ -409,6 +425,7 @@ function SendPathPaymentCtrl($scope, Server) {
     * Received a broadcast to automatically fill in the keypair into the form.
     */
     $scope.$on("sendpathpayment", function (event, keypair) {
+        $scope.collapsed = false;
         $scope.data.address = keypair.address;
         $scope.data.secret = keypair.secret;
     });
@@ -466,12 +483,12 @@ function StreamAccountTransactionsCtrl($scope, Server) {
         $scope.data.transactions = [];
         // call the "accounts" endpoint and pass it streaming event handlers
         // this will return the "EventSource" object that we can close after we're through
-        es = Server.accounts($scope.data.address, "transactions", {
-            streaming: {
+        es = Server.transactions()
+            .forAccount($scope.data.address)
+            .stream({
                 onmessage: onTransaction,
                 onerror: onError
-            }
-        });
+            });
     }
 
     var onTransaction = function (transaction) {
@@ -502,6 +519,7 @@ function CreateTrustLineCtrl($scope, Server) {
     * Received a broadcast to automatically fill in the keypair into the form.
     */
     $scope.$on("addtrust", function (event, keypair) {
+        $scope.collapsed = false;
         $scope.data.address = keypair.address;
         $scope.data.secret = keypair.secret;
     });
@@ -546,6 +564,7 @@ function AuthorizeTrustCtrl($scope, Server) {
     * Received a broadcast to automatically fill in the keypair into the form.
     */
     $scope.$on("authorizetrust", function (event, keypair) {
+        $scope.collapsed = false;
         $scope.data.address = keypair.address;
         $scope.data.secret = keypair.secret;
     });
@@ -597,6 +616,7 @@ function CreateOfferCtrl($scope, Server) {
     * Received a broadcast to automatically fill in the keypair into the form.
     */
     $scope.$on("createoffer", function (event, keypair) {
+        $scope.collapsed = false;
         $scope.data.address = keypair.address;
         $scope.data.secret = keypair.secret;
     });
