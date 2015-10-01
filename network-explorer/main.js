@@ -5,8 +5,6 @@ var myApp = angular.module('myApp', []).config(function($anchorScrollProvider) {
     $anchorScrollProvider.disableAutoScrolling();
 });
 
-StellarSdk.Network.useTestNet();
-
 // Level 1 - Create a new Stellar Address and create an account on the testnet
 function CreateStellarAddressCtrl($scope, $rootScope, Server, $location, $anchorScroll) {
 
@@ -25,7 +23,7 @@ function CreateStellarAddressCtrl($scope, $rootScope, Server, $location, $anchor
     }
 
     $scope.createAccount = function () {
-        Server.friendbot($scope.data.keypair.address)
+        Server.getServer().friendbot($scope.data.keypair.address)
             .call()
             .then(function () {
                 $scope.$apply(function () {
@@ -124,7 +122,7 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
     * Lookup the account by address and show the account's balances.
     */
     $scope.refreshBalances = function (account) {
-        Server.accounts()
+        Server.getServer().accounts()
             .address(account.keypair.address)
             .call()
             .then(function (result) {
@@ -138,7 +136,7 @@ function AccountManagerCtrl($scope, $rootScope, $location, $anchorScroll, Server
     * Lookup the account by address and show the account's offers.
     */
     $scope.refreshOffers = function (account) {
-        Server.offers('accounts', account.keypair.address)
+        Server.getServer().offers('accounts', account.keypair.address)
               .call()
               .then(function (result) {
                 $scope.$apply(function () {
@@ -226,7 +224,7 @@ function ViewAccountInfoCtrl($scope, Server) {
     * Lookup the account by address and show the data.
     */
     $scope.viewAccountInfo = function () {
-        Server.accounts()
+        Server.getServer().accounts()
             .address($scope.data.address)
             .call()
             .then(function (account) {
@@ -265,7 +263,7 @@ function ViewOffersCtrl($scope, Server) {
     * Lookup the offers by address and show the data.
     */
     $scope.viewOffers = function () {
-        Server.offers('accounts', $scope.data.address)
+        Server.getServer().offers('accounts', $scope.data.address)
             .call()
             .then(function (offers) {
                 $scope.$apply(function () {
@@ -320,7 +318,7 @@ function SetOptionsCtrl($scope, Server) {
     };
 
     $scope.setOptions = function () {
-        Server.accounts()
+        Server.getServer().accounts()
             .address($scope.data.address)
             .call()
             .then(function (account) {
@@ -341,13 +339,17 @@ function SetOptionsCtrl($scope, Server) {
                 if ($scope.data.homeDomain) {
                     options.homeDomain = $scope.data.homeDomain;
                 }
+
+                if ($scope.data.inflationDest) {
+                    options.inflationDest = $scope.data.inflationDest;
+                }
                 var transaction = new StellarSdk.TransactionBuilder(account)
                     .addOperation(StellarSdk.Operation.setOptions(options))
                     // sign the transaction with the account's secret key
                     .addSigner(StellarSdk.Keypair.fromSeed($scope.data.secret))
                     .build();
                 console.log(transaction);
-                return Server.submitTransaction(transaction);
+                return Server.getServer().submitTransaction(transaction);
             })
             .then(function (result) {
                 $scope.$apply(function () {
@@ -384,7 +386,7 @@ function SendPaymentCtrl($scope, Server) {
 
     function sendPayment(data) {
         // first load the account from the server (StellarSdk uses the account's latest sequence #)
-        Server.loadAccount(data.address)
+        Server.getServer().loadAccount(data.address)
         .then(function (account) {
             // create a new transaction using StellarSdk's TransactionBuilder
             var transaction = new StellarSdk.TransactionBuilder(account, {
@@ -400,7 +402,7 @@ function SendPaymentCtrl($scope, Server) {
                 // sign the transaction with the account's secret key
                 .addSigner(StellarSdk.Keypair.fromSeed(data.secret))
                 .build();
-            return Server.submitTransaction(transaction);
+            return Server.getServer().submitTransaction(transaction);
         })
         .then(function (result) {
             $scope.$apply(function () {
@@ -436,7 +438,7 @@ function SendPathPaymentCtrl($scope, Server) {
 
     function sendPathPayment(data) {
         // first load the account from the server (StellarSdk uses the account's latest sequence #)
-        Server.loadAccount(data.address)
+        Server.getServer().loadAccount(data.address)
         .then(function (account) {
             // create a new transaction using StellarSdk's TransactionBuilder
             var transaction = new StellarSdk.TransactionBuilder(account, {
@@ -454,7 +456,7 @@ function SendPathPaymentCtrl($scope, Server) {
                 // sign the transaction with the account's secret key
                 .addSigner(StellarSdk.Keypair.fromSeed(data.secret))
                 .build();
-            return Server.submitTransaction(transaction);
+            return Server.getServer().submitTransaction(transaction);
         })
         .then(function (result) {
             $scope.$apply(function () {
@@ -483,7 +485,7 @@ function StreamAccountTransactionsCtrl($scope, Server) {
         $scope.data.transactions = [];
         // call the "accounts" endpoint and pass it streaming event handlers
         // this will return the "EventSource" object that we can close after we're through
-        es = Server.transactions()
+        es = Server.getServer().transactions()
             .forAccount($scope.data.address)
             .stream({
                 onmessage: onTransaction,
@@ -526,7 +528,7 @@ function CreateTrustLineCtrl($scope, Server) {
 
     $scope.createTrustLine = function () {
         // first load the account from the server
-        Server.loadAccount($scope.data.address)
+        Server.getServer().loadAccount($scope.data.address)
         .then(function (account) {
             // transactionbuilder uses the account's latest sequence #
             return new StellarSdk.TransactionBuilder(account)
@@ -539,7 +541,7 @@ function CreateTrustLineCtrl($scope, Server) {
                 .build();
         })
         .then(function (transaction) {
-            return Server.submitTransaction(transaction);
+            return Server.getServer().submitTransaction(transaction);
         })
         .then(function (result) {
             $scope.$apply(function () {
@@ -571,7 +573,7 @@ function AuthorizeTrustCtrl($scope, Server) {
 
     $scope.authorizeTrust = function () {
         // first load the account from the server
-        Server.loadAccount($scope.data.address)
+        Server.getServer().loadAccount($scope.data.address)
         .then(function (account) {
             console.log($scope.data.authorize);
             // transactionbuilder uses the account's latest sequence #
@@ -589,7 +591,7 @@ function AuthorizeTrustCtrl($scope, Server) {
             return transaction;
         })
         .then(function (transaction) {
-            return Server.submitTransaction(transaction);
+            return Server.getServer().submitTransaction(transaction);
         })
         .then(function (result) {
             $scope.$apply(function () {
@@ -623,7 +625,7 @@ function CreateOfferCtrl($scope, Server) {
 
     $scope.createOffer = function () {
         // load the latest sequence number for the account
-        Server.loadAccount($scope.data.address)
+        Server.getServer().loadAccount($scope.data.address)
         .then(function (account) {
             var transaction = new StellarSdk.TransactionBuilder(account)
                 // add a "manageOffer" operation to the transaction
@@ -642,7 +644,7 @@ function CreateOfferCtrl($scope, Server) {
                 // sign the transaction with the account's secret key
                 .addSigner(StellarSdk.Keypair.fromSeed($scope.data.secret))
                 .build();
-            return Server.submitTransaction(transaction);
+            return Server.getServer().submitTransaction(transaction);
         })
         .then(function (result) {
             $scope.$apply(function () {
@@ -659,17 +661,57 @@ function CreateOfferCtrl($scope, Server) {
 }
 myApp.controller("CreateOfferCtrl", CreateOfferCtrl);
 
-// FOR TESTNET, USE BELOW. Make sure to set secure: true in the config
-myApp.value("HORIZON_HOST", "horizon-testnet.stellar.org")
-myApp.value("HORIZON_PORT", 443)
-// myApp.value("HORIZON_HOST", "localhost")
-// myApp.value("HORIZON_PORT", 8000)
-// Helper service that holds the server connection
-function Server(HORIZON_HOST, HORIZON_PORT) {
-    return new StellarSdk.Server({
-        hostname:HORIZON_HOST,
-        port:HORIZON_PORT,
-        secure: true // true for the testnet
+function NetworkSelectCtrl($scope, Server) {
+    $scope.collapsed = true;
+    $scope.network = 'test';
+
+    /**
+     * Received a broadcast to automatically fill in the keypair into the form.
+     */
+    $scope.$on("networkselect", function (event) {
+        $scope.collapsed = false;
     });
+
+    $scope.$watch('network', function(network) {
+        if (network === 'test') {
+            StellarSdk.Network.useTestNetwork();
+        } else {
+            StellarSdk.Network.usePublicNetwork();
+        }
+        Server.switchNetwork(network);
+    });
+}
+myApp.controller("NetworkSelectCtrl", NetworkSelectCtrl);
+
+myApp.value("LIVE_HORIZON_HOST", "horizon-live.stellar.org");
+myApp.value("TEST_HORIZON_HOST", "horizon-testnet.stellar.org");
+myApp.value("HORIZON_PORT", 443);
+// Helper service that holds the server connection
+function Server(LIVE_HORIZON_HOST, TEST_HORIZON_HOST, HORIZON_PORT) {
+    var testHorizon = new StellarSdk.Server({
+        hostname:TEST_HORIZON_HOST,
+        port:HORIZON_PORT,
+        secure: true
+    });
+
+    var liveHorizon = new StellarSdk.Server({
+        hostname:LIVE_HORIZON_HOST,
+        port:HORIZON_PORT,
+        secure: true
+    });
+
+    var currentServer = testHorizon;
+
+    this.getServer = function() {
+        return currentServer;
+    };
+
+    this.switchNetwork = function(network) {
+        if (network === 'test') {
+            currentServer = testHorizon;
+        } else {
+            currentServer = liveHorizon;
+        }
+    };
 }
 myApp.service("Server", Server);
